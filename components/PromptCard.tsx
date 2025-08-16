@@ -166,7 +166,12 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
         </Button>
 
         <Button
-          className="tasty-gradient-button bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 hover:from-orange-600 hover:via-pink-600 hover:to-purple-700 text-white text-xs px-4 py-2 h-auto rounded-xl shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-pink-500/30 border-0 transition-all duration-300 relative overflow-hidden"
+          className="tasty-gradient-button bg-transparent text-foreground text-xs px-4 py-2 h-auto rounded-xl border-2 transition-all duration-300 relative overflow-hidden hover:bg-gradient-to-r hover:from-orange-500/10 hover:via-pink-500/10 hover:to-purple-600/10"
+          style={{
+            background: 'transparent',
+            borderImage: 'linear-gradient(90deg, #f97316, #ec4899, #a855f7) 1',
+            borderImageSlice: '1'
+          }}
           onClick={(e) => {
             e.stopPropagation();
             onOpen(prompt);
@@ -182,24 +187,13 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
             <ArrowRight className="h-3 w-3" />
           </motion.span>
           
-          {/* Animated gradient overlay */}
+          {/* Subtle gradient overlay on hover */}
           <motion.div
-            className="absolute inset-0"
-            animate={{
-              background: [
-                'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
-                'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
-                'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
-              ],
-              x: ['-100%', '100%'],
+            className="absolute inset-0 rounded-xl opacity-0 hover:opacity-100 transition-opacity duration-300"
+            style={{
+              background: 'linear-gradient(90deg, rgba(249, 115, 22, 0.1), rgba(236, 72, 153, 0.1), rgba(168, 85, 247, 0.1))'
             }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-              repeatDelay: 1,
-            }}
-            style={{ willChange: performance.willChange.transform }}
+            style={{ willChange: performance.willChange.opacity }}
           />
         </Button>
       </div>

@@ -94,7 +94,7 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
           {/* Backdrop */}
           <motion.div
             key="modal-backdrop"
-            className="fixed inset-0 bg-black/30 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm"
             onClick={handleClose}
             variants={variants.fadeIn}
             initial="hidden"
@@ -108,19 +108,22 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
           <div key="modal-container" className="fixed inset-0 flex items-center justify-center p-4 md:p-6 overflow-hidden">
             <motion.div
               key="modal-content"
-              className="bg-card/95 backdrop-blur-xl border border-border/50 rounded-2xl md:rounded-3xl shadow-2xl max-w-3xl w-full flex flex-col"
-              style={{ maxHeight: "calc(100vh - 32px)", minHeight: "400px" }}
+              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl md:rounded-3xl shadow-2xl max-w-3xl w-full flex flex-col"
+              style={{ 
+                maxHeight: "calc(100vh - 32px)", 
+                minHeight: "400px",
+                willChange: performance.willChange.transform 
+              }}
               variants={variants.scaleIn}
               initial="hidden"
               animate="visible"
               exit="hidden"
               transition={animations.modal.content.transition}
-              style={{ willChange: performance.willChange.transform }}
             >
               {/* Header - Fixed */}
-              <div className="flex items-center justify-between p-4 md:p-6 border-b border-border/30 flex-shrink-0">
+              <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
                 <motion.h2 
-                  className="text-xl font-semibold text-foreground"
+                  className="text-xl font-semibold text-gray-900 dark:text-gray-100"
                   variants={variants.slideIn}
                   initial="hidden"
                   animate="visible"
@@ -131,12 +134,12 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
                 </motion.h2>
                 <motion.button
                   onClick={handleClose}
-                  className="p-2 rounded-xl hover:bg-muted/50 transition-colors duration-200"
+                  className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
                   whileHover={animations.hover.scale}
                   whileTap={animations.tap.press}
                   style={{ willChange: performance.willChange.transform }}
                 >
-                  <X className="h-5 w-5 text-muted-foreground" />
+                  <X className="h-5 w-5 text-gray-500 dark:text-gray-400" />
                 </motion.button>
               </div>
 
@@ -150,7 +153,7 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
                   transition={{ delay: 0.1 }}
                   style={{ willChange: performance.willChange.transform }}
                 >
-                  <Label htmlFor="title" className="text-sm font-medium text-foreground mb-2 block">
+                  <Label htmlFor="title" className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 block">
                     Prompt Title *
                   </Label>
                   <Input
@@ -170,7 +173,7 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
                   transition={{ delay: 0.15 }}
                   style={{ willChange: performance.willChange.transform }}
                 >
-                  <Label htmlFor="summary" className="text-sm font-medium text-foreground mb-2 block">
+                  <Label htmlFor="summary" className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 block">
                     Summary
                   </Label>
                   <Textarea
@@ -191,7 +194,7 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
                   transition={{ delay: 0.2 }}
                   style={{ willChange: performance.willChange.transform }}
                 >
-                  <Label htmlFor="content" className="text-sm font-medium text-foreground mb-2 block">
+                  <Label htmlFor="content" className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 block">
                     Prompt Content *
                   </Label>
                   <Textarea
@@ -213,7 +216,7 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
                     transition={{ delay: 0.25 }}
                     style={{ willChange: performance.willChange.transform }}
                   >
-                    <Label htmlFor="phase" className="text-sm font-medium text-foreground mb-2 block">
+                    <Label htmlFor="phase" className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 block">
                       Design Phase *
                     </Label>
                     <Select value={formData.phase} onValueChange={(value) => setFormData(prev => ({ ...prev, phase: value }))}>
@@ -238,7 +241,7 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
                     transition={{ delay: 0.3 }}
                     style={{ willChange: performance.willChange.transform }}
                   >
-                    <Label htmlFor="impact" className="text-sm font-medium text-foreground mb-2 block">
+                    <Label htmlFor="impact" className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 block">
                       Impact Level
                     </Label>
                     <Select value={formData.impact} onValueChange={(value) => setFormData(prev => ({ ...prev, impact: value }))}>
@@ -262,7 +265,7 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
                   transition={{ delay: 0.35 }}
                   style={{ willChange: performance.willChange.transform }}
                 >
-                  <Label htmlFor="category" className="text-sm font-medium text-foreground mb-2 block">
+                  <Label htmlFor="category" className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 block">
                     Category
                   </Label>
                   <Select value={formData.category} onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}>
@@ -286,7 +289,7 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
                   transition={{ delay: 0.4 }}
                   style={{ willChange: performance.willChange.transform }}
                 >
-                  <Label className="text-sm font-medium text-foreground mb-2 block">
+                  <Label className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 block">
                     Tags
                   </Label>
                   <div className="space-y-3">
@@ -299,17 +302,20 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
                         className="flex-1"
                         onKeyPress={(e) => e.key === 'Enter' && addTag()}
                       />
-                      <Button
-                        onClick={addTag}
-                        size="sm"
-                        variant="outline"
-                        className="px-3"
+                      <motion.div
                         whileHover={animations.hover.scale}
                         whileTap={animations.tap.press}
                         style={{ willChange: performance.willChange.transform }}
                       >
-                        <Plus className="h-4 w-4" />
-                      </Button>
+                        <Button
+                          onClick={addTag}
+                          size="sm"
+                          variant="outline"
+                          className="px-3"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </motion.div>
                     </div>
 
                     {/* Tags Display */}
@@ -353,17 +359,20 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
                   transition={{ delay: 0.45 }}
                   style={{ willChange: performance.willChange.transform }}
                 >
-                  <Button
-                    variant="ghost"
-                    onClick={() => setShowExample(!showExample)}
-                    className="w-full justify-start text-sm text-muted-foreground hover:text-foreground"
+                  <motion.div
                     whileHover={animations.hover.scale}
                     whileTap={animations.tap.press}
                     style={{ willChange: performance.willChange.transform }}
                   >
-                    <Plus className={`h-4 w-4 mr-2 transition-transform duration-200 ${showExample ? 'rotate-45' : ''}`} />
-                    {showExample ? 'Hide' : 'Add'} Example Output
-                  </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={() => setShowExample(!showExample)}
+                      className="w-full justify-start text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                    >
+                      <Plus className={`h-4 w-4 mr-2 transition-transform duration-200 ${showExample ? 'rotate-45' : ''}`} />
+                      {showExample ? 'Hide' : 'Add'} Example Output
+                    </Button>
+                  </motion.div>
                 </motion.div>
 
                 {/* Example Output */}
@@ -371,14 +380,14 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
                   {showExample && (
                     <motion.div
                       key="example-output"
-                      variants={variants.fade.up}
-                      initial="initial"
-                      animate="animate"
-                      exit="exit"
+                      variants={variants.slideIn}
+                      initial="hidden"
+                      animate="visible"
+                      exit="hidden"
                       transition={animations.tween.medium}
                       style={{ willChange: performance.willChange.layout }}
                     >
-                      <Label htmlFor="exampleOutput" className="text-sm font-medium text-foreground mb-2 block">
+                      <Label htmlFor="exampleOutput" className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 block">
                         Example Output
                       </Label>
                       <Textarea

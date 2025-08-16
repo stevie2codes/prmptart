@@ -1,124 +1,80 @@
-import { motion } from "framer-motion";
-import { Button } from "./ui/button";
 import { Plus } from "lucide-react";
+import { Button } from "./ui/button";
 import { ThemeToggle } from "./ThemeToggle";
-import { animations, variants, performance } from "../src/lib/animations";
+import { SearchBar } from "./SearchBar";
 
 interface TopBarProps {
   isSidebarCollapsed: boolean;
   onCreatePrompt: () => void;
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
 }
 
-export function TopBar({ isSidebarCollapsed, onCreatePrompt }: TopBarProps) {
+export function TopBar({ isSidebarCollapsed, onCreatePrompt, searchQuery, onSearchChange }: TopBarProps) {
   return (
-    <motion.header
+    <header
       className="fixed top-0 z-20 bg-background/80 dark:bg-background/60 backdrop-blur-xl border-b border-border/30 shadow-sm transition-all duration-300 ease-in-out"
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ 
-        opacity: 1, 
-        y: 0
-      }}
-      transition={animations.tween.medium}
       style={{ 
         left: isSidebarCollapsed ? 72 : 320,
         right: 0,
         height: 64,
-        width: `calc(100vw - ${isSidebarCollapsed ? 72 : 320}px)`,
-        willChange: performance.willChange.layout 
+        width: `calc(100vw - ${isSidebarCollapsed ? 72 : 320}px)`
       }}
     >
       <div className="flex items-center justify-between h-full px-6">
         {/* Left side - App title/branding */}
-        <motion.div
-          className="flex items-center gap-3"
-          variants={variants.slideIn}
-          initial="hidden"
-          animate="visible"
-          transition={{ delay: 0.1, duration: 0.4 }}
-          style={{ willChange: performance.willChange.transform }}
-        >
-          <motion.div
-            className="w-2 h-2 rounded-full bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 shadow-sm"
-            animate={{ 
-              scale: [1, 1.2, 1],
-              opacity: [0.7, 1, 0.7]
+        <div className="flex items-center gap-2">
+          {/* Pop-Tart Logo */}
+          <div className="w-32 h-24 flex-shrink-0">
+            <img
+              src="/Playful Food Brand Logo with Poptart Emblem.svg"
+              alt="PromptArt Logo"
+              className="w-full h-full object-contain"
+            />
+          </div>
+          
+          {/* App Title */}
+          <h1 
+            className="text-2xl font-bold bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 bg-clip-text text-transparent flex-shrink-0"
+            style={{ 
+              fontFamily: '"Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+              textShadow: '0 2px 4px rgba(0,0,0,0.1)'
             }}
-            transition={{ 
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            style={{ willChange: performance.willChange.transform }}
-          />
-          <h1 className="text-lg font-medium text-foreground transition-colors duration-300">
-            PrmptArt
+          >
+            PromptArt
           </h1>
-        </motion.div>
+        </div>
+
+        {/* Center - Search Bar */}
+        <div className="flex-1 max-w-2xl mx-8">
+          <SearchBar
+            value={searchQuery}
+            onChange={onSearchChange}
+            placeholder="Search prompts by title, content, or tags..."
+          />
+        </div>
 
         {/* Right side - Actions */}
-        <motion.div
-          className="flex items-center gap-3"
-          variants={variants.slideIn}
-          initial="hidden"
-          animate="visible"
-          transition={{ delay: 0.2, duration: 0.4 }}
-          style={{ willChange: performance.willChange.transform }}
-        >
+        <div className="flex items-center gap-3">
           {/* Theme Toggle */}
-          <motion.div
-            className="hidden sm:block"
-            whileHover={animations.hover.scale}
-            whileTap={animations.tap.press}
-            style={{ willChange: performance.willChange.transform }}
-          >
+          <div className="hidden sm:block">
             <div className="p-2 rounded-xl bg-card/50 backdrop-blur-sm border border-border/30 shadow-sm hover:shadow-md hover:border-orange-200 dark:hover:border-orange-700 transition-all duration-300">
               <ThemeToggle isCollapsed={true} />
             </div>
-          </motion.div>
+          </div>
 
           {/* Create Prompt Button */}
-          <motion.div
-            whileHover={animations.hover.scale}
-            whileTap={animations.tap.press}
-            style={{ willChange: performance.willChange.transform }}
+          <Button
+            onClick={onCreatePrompt}
+            className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 hover:from-orange-600 hover:via-pink-600 hover:to-purple-700 text-white px-4 py-2 rounded-xl shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-pink-500/30 border-0 transition-all duration-300 relative overflow-hidden group"
           >
-            <Button
-              onClick={onCreatePrompt}
-              className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 hover:from-orange-600 hover:via-pink-600 hover:to-purple-700 text-white px-4 py-2 rounded-xl shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-pink-500/30 border-0 transition-all duration-300 relative overflow-hidden group"
-            >
-              <motion.span
-                className="flex items-center gap-2 relative z-10"
-                whileHover={{ x: 2 }}
-                transition={animations.tween.fast}
-                style={{ willChange: performance.willChange.transform }}
-              >
-                <Plus className="h-4 w-4" />
-                <span>Create Prompt</span>
-              </motion.span>
-              
-              {/* Animated gradient overlay */}
-              <motion.div
-                className="absolute inset-0"
-                animate={{
-                  background: [
-                    'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
-                    'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
-                    'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
-                  ],
-                  x: ['-100%', '100%'],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  repeatDelay: 1,
-                }}
-                style={{ willChange: performance.willChange.transform }}
-              />
-            </Button>
-          </motion.div>
-        </motion.div>
+            <span className="flex items-center gap-2 relative z-10">
+              <Plus className="h-4 w-4" />
+              <span>Create Prompt</span>
+            </span>
+          </Button>
+        </div>
       </div>
-    </motion.header>
+    </header>
   );
 }

@@ -7,8 +7,8 @@ interface NavigationSidebarProps {
   onToggle: () => void;
   selectedPhase: string | null;
   onPhaseSelect: (phase: string) => void;
-  selectedCategory: string;
-  onCategorySelect: (category: string) => void;
+  selectedCategory: 'design' | 'pm' | 'engineering' | null;
+  onCategorySelect: (category: 'design' | 'pm' | 'engineering') => void;
 }
 
 export function NavigationSidebar({ 
@@ -21,44 +21,44 @@ export function NavigationSidebar({
 }: NavigationSidebarProps) {
   const categories = [
     {
-      id: 'design',
+      id: 'design' as const,
       label: 'Design Prompts',
       icon: Palette,
-      color: 'blue',
+      color: 'blue' as const,
       phases: [
-        { id: 'Research', label: 'Research & Discovery', color: 'blue' },
-        { id: 'IA', label: 'User Flows & IA', color: 'purple' },
-        { id: 'Ideation', label: 'Ideation & Concept Development', color: 'green' },
-        { id: 'Prototyping', label: 'Prototyping & Testing', color: 'orange' },
-        { id: 'Stakeholder', label: 'Stakeholder & PM Conversations', color: 'pink' },
-        { id: 'Dev Handoff', label: 'Developer Handoff & QA', color: 'cyan' }
+        { id: 'Research', label: 'Research & Discovery', color: 'blue' as const },
+        { id: 'IA', label: 'User Flows & IA', color: 'purple' as const },
+        { id: 'Ideation', label: 'Ideation & Concept Development', color: 'green' as const },
+        { id: 'Prototyping', label: 'Prototyping & Testing', color: 'orange' as const },
+        { id: 'Stakeholder', label: 'Stakeholder & PM Conversations', color: 'pink' as const },
+        { id: 'Dev Handoff', label: 'Developer Handoff & QA', color: 'cyan' as const }
       ]
     },
     {
-      id: 'pm',
+      id: 'pm' as const,
       label: 'PM Prompts',
       icon: Users,
-      color: 'purple',
+      color: 'purple' as const,
       phases: [] // Future implementation
     },
     {
-      id: 'engineering',
+      id: 'engineering' as const,
       label: 'Engineering Prompts',
       icon: Code,
-      color: 'green',
+      color: 'green' as const,
       phases: [] // Future implementation
     }
   ];
 
   const currentCategory = categories.find(cat => cat.id === selectedCategory);
 
-  const getPhaseColorClasses = (color: string, isSelected: boolean) => {
+  const getPhaseColorClasses = (color: 'blue' | 'purple' | 'green' | 'orange' | 'pink' | 'cyan', isSelected: boolean) => {
     const colors = {
       blue: isSelected 
         ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700' 
         : 'hover:bg-blue-50/50 dark:hover:bg-blue-900/10 hover:text-blue-700 dark:hover:text-blue-300',
       purple: isSelected 
-        ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700' 
+        ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-blue-700' 
         : 'hover:bg-purple-50/50 dark:hover:bg-purple-900/10 hover:text-purple-700 dark:hover:text-purple-300',
       green: isSelected 
         ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700' 
@@ -76,7 +76,7 @@ export function NavigationSidebar({
     return colors[color] || 'hover:bg-muted/50';
   };
 
-  const getCategoryColorClasses = (color: string, isSelected: boolean) => {
+  const getCategoryColorClasses = (color: 'blue' | 'purple' | 'green', isSelected: boolean) => {
     const colors = {
       blue: isSelected 
         ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700' 
