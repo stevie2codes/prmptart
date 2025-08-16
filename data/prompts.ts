@@ -7,6 +7,7 @@ export interface Prompt {
   content: string;
   exampleOutput?: string;
   tags: string[];
+  category: 'design' | 'research' | 'content' | 'development';
 }
 
 // Helper function to create RTCCF content from individual components
@@ -43,7 +44,8 @@ export const mockPrompts: Prompt[] = [
       'Table with columns: Pattern, Insight, Evidence (quotes), HMW Statement.'
     ),
     exampleOutput: '| Pattern | Insight | Evidence | HMW Statement |\n|---------|---------|----------|---------------|\n| Navigation Confusion | Users struggle with current menu structure | "I never know where to find settings" | How might we simplify navigation paths? |',
-    tags: ['Deep Dive', 'Persona-based']
+    tags: ['Deep Dive', 'Persona-based'],
+    category: 'research'
   },
   {
     id: '2',
@@ -58,7 +60,8 @@ export const mockPrompts: Prompt[] = [
       'Focus on actionable insights that directly impact product decisions and feature prioritization.',
       'Sections: Key Behaviors, Core Motivations, Major Blockers, MVP Implications.'
     ),
-    tags: ['Persona-based', 'Deep Dive']
+    tags: ['Persona-based', 'Deep Dive'],
+    category: 'research'
   },
   {
     id: '3',
@@ -73,7 +76,8 @@ export const mockPrompts: Prompt[] = [
       'Focus on actionable opportunities, avoid feature copying, consider user context differences.',
       'Table with columns: Feature, Competitor Approach, Our Opportunity, Priority Level.'
     ),
-    tags: ['Competitive Analysis', 'Quick Win']
+    tags: ['Competitive Analysis', 'Quick Win'],
+    category: 'research'
   },
   {
     id: '4',

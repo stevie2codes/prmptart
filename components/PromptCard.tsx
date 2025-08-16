@@ -4,6 +4,7 @@ import { Prompt } from "../data/prompts";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { useState } from "react";
+import { animations, variants, performance, animationUtils } from "../src/lib/animations";
 
 interface PromptCardProps {
   prompt: Prompt;
@@ -62,12 +63,10 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
     <motion.div
       className="prompt-card-container bg-card/50 backdrop-blur-sm border border-border/50 rounded-3xl p-6 shadow-lg shadow-black/5 dark:shadow-black/20 hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30 transition-all duration-300 cursor-pointer group"
       onClick={() => onOpen(prompt)}
-      whileHover={{ 
-        scale: 1.02,
-        transition: { duration: 0.2 }
-      }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={animations.hover.lift}
+      whileTap={animations.tap.scale}
       layout
+      style={{ willChange: performance.willChange.layout }}
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
@@ -80,7 +79,8 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
         
         <motion.div
           className="flex items-center gap-1 text-xs text-muted-foreground/70 bg-muted/50 px-2 py-1 rounded-full transition-colors duration-300"
-          whileHover={{ scale: 1.05 }}
+          whileHover={animations.hover.scale}
+          style={{ willChange: performance.willChange.transform }}
         >
           <span className="text-sm">{getImpactIcon()}</span>
           <span className="font-medium">{prompt.impact}</span>
@@ -114,7 +114,11 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
               className="inline-flex items-center px-2 py-1 text-xs bg-accent/50 text-accent-foreground/70 rounded-full transition-colors duration-300"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.1, duration: 0.2 }}
+              transition={{ 
+                delay: animationUtils.createStaggerDelay(index, 0.1, 0.3), 
+                duration: 0.2 
+              }}
+              style={{ willChange: performance.willChange.transform }}
             >
               {tag}
             </motion.span>
@@ -125,6 +129,7 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3, duration: 0.2 }}
+              style={{ willChange: performance.willChange.transform }}
             >
               +{prompt.tags.length - 3} more
             </motion.span>
@@ -143,7 +148,8 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
           <motion.div
             className="flex items-center gap-1.5"
             whileHover={{ x: 2 }}
-            transition={{ duration: 0.2 }}
+            transition={animations.tween.fast}
+            style={{ willChange: performance.willChange.transform }}
           >
             {isCopied ? (
               <>
@@ -169,7 +175,8 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
           <motion.span
             className="flex items-center gap-1.5 relative z-10"
             whileHover={{ x: 2 }}
-            transition={{ duration: 0.2 }}
+            transition={animations.tween.fast}
+            style={{ willChange: performance.willChange.transform }}
           >
             <span>View Prompt</span>
             <ArrowRight className="h-3 w-3" />
@@ -192,6 +199,7 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
               ease: "easeInOut",
               repeatDelay: 1,
             }}
+            style={{ willChange: performance.willChange.transform }}
           />
         </Button>
       </div>

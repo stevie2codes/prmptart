@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { X } from "lucide-react";
 import { mockPrompts } from "../data/prompts";
 import { motion, AnimatePresence } from "framer-motion";
+import { animations, variants, performance, animationUtils } from "../src/lib/animations";
 
 interface FilterChipsProps {
   selectedTags: string[];
@@ -34,29 +35,35 @@ export function FilterChips({ selectedTags, onTagToggle, onClearTags }: FilterCh
   return (
     <div className="space-y-3">
       {/* Active Filters Header */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {selectedTags.length > 0 && (
           <motion.div
+            key="active-filters-header"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
+            transition={animations.tween.medium}
             className="flex items-center justify-between"
+            style={{ willChange: performance.willChange.layout }}
           >
             <motion.span 
               className="text-sm font-medium text-foreground"
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
+              variants={variants.slideIn}
+              initial="hidden"
+              animate="visible"
               transition={{ delay: 0.1 }}
+              style={{ willChange: performance.willChange.transform }}
             >
               Active Filters ({selectedTags.length})
             </motion.span>
             <motion.div
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
+              variants={variants.slideIn}
+              initial="hidden"
+              animate="visible"
               transition={{ delay: 0.1 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={animations.hover.scale}
+              whileTap={animations.tap.press}
+              style={{ willChange: performance.willChange.transform }}
             >
               <Button
                 variant="ghost"
@@ -73,14 +80,16 @@ export function FilterChips({ selectedTags, onTagToggle, onClearTags }: FilterCh
       </AnimatePresence>
 
       {/* Selected Tags */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {selectedTags.length > 0 && (
           <motion.div
+            key="selected-tags"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
+            transition={animations.tween.medium}
             className="flex flex-wrap gap-2"
+            style={{ willChange: performance.willChange.layout }}
           >
             {selectedTags.map((tag, index) => (
               <motion.div
@@ -91,24 +100,20 @@ export function FilterChips({ selectedTags, onTagToggle, onClearTags }: FilterCh
                 exit={{ opacity: 0, scale: 0.8, x: -20 }}
                 transition={{ 
                   duration: 0.2,
-                  delay: index * 0.05,
-                  layout: { duration: 0.3 }
+                  delay: animationUtils.createStaggerDelay(index, 0.05, 0.2),
+                  layout: animations.layout.smooth
                 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={animations.hover.scale}
+                whileTap={animations.tap.press}
+                style={{ willChange: performance.willChange.layout }}
               >
                 <Badge
-                  variant="default"
-                  className="text-xs cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90 border border-primary/20 shadow-sm hover:shadow-md transition-all duration-200"
+                  variant="secondary"
+                  className="text-xs font-medium bg-primary/20 text-primary-foreground hover:bg-primary/30 transition-colors duration-200 cursor-pointer"
                   onClick={() => onTagToggle(tag)}
                 >
-                  <span className="mr-1">{tag}</span>
-                  <motion.div
-                    whileHover={{ rotate: 90 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <X className="h-3 w-3" />
-                  </motion.div>
+                  {tag}
+                  <X className="h-3 w-3 ml-1.5 opacity-70 hover:opacity-100 transition-opacity duration-200" />
                 </Badge>
               </motion.div>
             ))}
@@ -117,77 +122,37 @@ export function FilterChips({ selectedTags, onTagToggle, onClearTags }: FilterCh
       </AnimatePresence>
 
       {/* Available Tags */}
-      <div>
-        <motion.p 
-          className="text-sm text-muted-foreground mb-2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4 }}
-        >
-          Filter by tags:
-        </motion.p>
-        
-        <div className="flex flex-wrap gap-2">
-          {prioritizedTags
-            .filter(tag => !selectedTags.includes(tag))
-            .map((tag, index) => (
-              <motion.div
-                key={`available-${tag}`}
-                layout
-                initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ 
-                  duration: 0.3,
-                  delay: index * 0.03,
-                  layout: { duration: 0.3 }
-                }}
-                whileHover={{ 
-                  scale: 1.05,
-                  y: -1,
-                  transition: { type: "spring", stiffness: 400, damping: 20 }
-                }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Badge
-                  variant="outline"
-                  className="text-xs cursor-pointer hover:bg-primary/10 hover:border-primary/30 hover:text-primary transition-all duration-200 border-border/40 bg-background/50 backdrop-blur-sm"
-                  onClick={() => onTagToggle(tag)}
-                >
-                  <motion.span
-                    whileHover={{ x: 1 }}
-                    transition={{ duration: 0.1 }}
-                  >
-                    {tag}
-                  </motion.span>
-                  <motion.span 
-                    className="ml-1 text-muted-foreground"
-                    initial={{ opacity: 0.7 }}
-                    whileHover={{ opacity: 1 }}
-                  >
-                    ({allTags[tag]})
-                  </motion.span>
-                </Badge>
-              </motion.div>
-            ))}
-        </div>
-      </div>
-
-      {/* No results indicator */}
-      <AnimatePresence>
-        {selectedTags.length > 0 && prioritizedTags.filter(tag => !selectedTags.includes(tag)).length === 0 && (
+      <motion.div
+        className="flex flex-wrap gap-2"
+        variants={variants.list}
+        initial="hidden"
+        animate="visible"
+        style={{ willChange: performance.willChange.layout }}
+      >
+        {prioritizedTags.map((tag, index) => (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.3 }}
-            className="text-center py-4"
+            key={tag}
+            variants={variants.listItem}
+            layout
+            whileHover={animations.hover.scale}
+            whileTap={animations.tap.press}
+            style={{ willChange: performance.willChange.transform }}
           >
-            <p className="text-xs text-muted-foreground">
-              All available tags are currently selected
-            </p>
+            <Badge
+              variant="outline"
+              className={`text-xs font-medium cursor-pointer transition-all duration-200 ${
+                selectedTags.includes(tag)
+                  ? 'bg-primary text-primary-foreground border-primary'
+                  : 'bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground border-border/50'
+              }`}
+              onClick={() => onTagToggle(tag)}
+            >
+              {tag}
+              <span className="ml-1.5 text-xs opacity-60">({allTags[tag]})</span>
+            </Badge>
           </motion.div>
-        )}
-      </AnimatePresence>
+        ))}
+      </motion.div>
     </div>
   );
 }

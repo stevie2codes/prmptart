@@ -105,7 +105,7 @@ export function NavigationSidebar({
         {/* Header */}
         <motion.div 
           className="flex items-center justify-between p-6 border-b border-sidebar-border/30"
-          style={{ marginTop: 64 }} // Account for top bar
+          // Account for top bar
           layout
         >
           <AnimatePresence mode="wait">
@@ -200,7 +200,7 @@ export function NavigationSidebar({
                           <motion.button
                             key={phase.id}
                             onClick={() => onPhaseSelect(phase.id)}
-                            className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 font-medium text-xs border ${
+                            className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 font-medium text-s border ${
                               selectedPhase === phase.id 
                                 ? `border ${getPhaseColorClasses(phase.color, true)}`
                                 : `border-transparent text-sidebar-foreground/60 ${getPhaseColorClasses(phase.color, false)}`
