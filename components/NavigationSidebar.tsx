@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Palette, Users, Code, Plus } from "lucide-react";
+import { ChevronLeft, Palette, Users, Code, Plus } from "lucide-react";
 import { Button } from "./ui/button";
+import { useSound } from "../src/contexts/SoundContext";
 
 interface NavigationSidebarProps {
   isCollapsed: boolean;
@@ -19,6 +20,18 @@ export function NavigationSidebar({
   selectedCategory, 
   onCategorySelect 
 }: NavigationSidebarProps) {
+  const { playSound } = useSound();
+
+  const handleToggle = () => {
+    playSound('SIDEBAR_TOGGLE');
+    onToggle();
+  };
+
+  const handleCategorySelect = (category: 'design' | 'pm' | 'engineering') => {
+    playSound('FILTER_SELECT');
+    onCategorySelect(category);
+  };
+
   const categories = [
     {
       id: 'design' as const,
@@ -126,7 +139,7 @@ export function NavigationSidebar({
           <Button
             variant="ghost"
             size="sm"
-            onClick={onToggle}
+            onClick={handleToggle}
             className="h-8 w-8 p-0 hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground rounded-xl"
           >
             <motion.div
@@ -150,7 +163,7 @@ export function NavigationSidebar({
               return (
                 <div key={category.id} className="space-y-1">
                   <motion.button
-                    onClick={() => onCategorySelect(category.id)}
+                    onClick={() => handleCategorySelect(category.id)}
                     className={`w-full text-left p-3 rounded-xl transition-all duration-200 font-medium text-sm border ${
                       isSelected 
                         ? `border ${getCategoryColorClasses(category.color, true)}`

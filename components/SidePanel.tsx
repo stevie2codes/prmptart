@@ -6,6 +6,7 @@ import { Badge } from "./ui/badge";
 import { Separator } from "./ui/separator";
 import { useState, useRef, useEffect } from "react";
 import { animations, variants, performance } from "../src/lib/animations";
+import { useSound } from "../src/contexts/SoundContext";
 
 interface SidePanelProps {
   prompt: Prompt | null;
@@ -17,6 +18,7 @@ export function SidePanel({ prompt, isOpen, onClose }: SidePanelProps) {
   const [isCopied, setIsCopied] = useState(false);
   const [showExample, setShowExample] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
+  const { playSound } = useSound();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -40,6 +42,7 @@ export function SidePanel({ prompt, isOpen, onClose }: SidePanelProps) {
     try {
       await navigator.clipboard.writeText(prompt.content);
       setIsCopied(true);
+      playSound('COPY_SUCCESS');
       setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
       // Fallback for older browsers
@@ -50,6 +53,7 @@ export function SidePanel({ prompt, isOpen, onClose }: SidePanelProps) {
       document.execCommand('copy');
       document.body.removeChild(textArea);
       setIsCopied(true);
+      playSound('COPY_SUCCESS');
       setTimeout(() => setIsCopied(false), 2000);
     }
   };
@@ -235,10 +239,11 @@ export function SidePanel({ prompt, isOpen, onClose }: SidePanelProps) {
                 </motion.div>
                 <motion.div 
                   className="flex flex-wrap gap-2"
-                  variants={variants.list}
+                  variants={variants.slideIn}
                   initial="hidden"
                   animate="visible"
-                  style={{ willChange: performance.willChange.layout }}
+                  transition={{ delay: 0.1 }}
+                  style={{ willChange: performance.willChange.transform }}
                 >
                   {prompt.tags.map((tag, index) => (
                     <motion.div
@@ -300,7 +305,7 @@ export function SidePanel({ prompt, isOpen, onClose }: SidePanelProps) {
                 <motion.div
                   key="example-output"
                   className="space-y-3"
-                  variants={variants.fade.up}
+                  variants={variants.fadeIn}
                   initial="initial"
                   animate="animate"
                   exit="exit"
@@ -365,17 +370,21 @@ export function SidePanel({ prompt, isOpen, onClose }: SidePanelProps) {
                 transition={{ delay: 0.35 }}
                 style={{ willChange: performance.willChange.transform }}
               >
-                <Button
-                  variant="ghost"
-                  onClick={() => setShowExample(!showExample)}
-                  className="w-full justify-start text-sm text-muted-foreground hover:text-foreground"
+                <motion.div
                   whileHover={animations.hover.scale}
                   whileTap={animations.tap.press}
                   style={{ willChange: performance.willChange.transform }}
                 >
-                  <Zap className="h-4 w-4 mr-2" />
-                  {showExample ? 'Hide' : 'Show'} Example Output
-                </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => setShowExample(!showExample)}
+                    className="w-full justify-start text-sm text-muted-foreground hover:text-foreground"
+                    style={{ willChange: performance.willChange.transform }}
+                  >
+                    <Zap className="h-4 w-4 mr-2" />
+                    {showExample ? 'Hide' : 'Show'} Example Output
+                  </Button>
+                </motion.div>
               </motion.div>
             )}
           </div>

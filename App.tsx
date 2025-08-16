@@ -1,19 +1,18 @@
 import { useState, useMemo } from "react";
-import { PromptCard } from "./components/PromptCard";
-import { SidePanel } from "./components/SidePanel";
-import { SearchBar } from "./components/SearchBar";
-import { FilterChips } from "./components/FilterChips";
-import { NavigationSidebar } from "./components/NavigationSidebar";
-import { TopBar } from "./components/TopBar";
-import { CreatePromptModal } from "./components/CreatePromptModal";
-import { ThemeProvider } from "./components/ThemeProvider";
-import { mockPrompts, Prompt } from "./data/prompts";
-import { Toaster } from "./components/ui/sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import { toast } from "sonner";
-import { animations, variants, performance, animationUtils } from "./src/lib/animations";
 import { ScrollAnimatedCard } from "./components/ScrollAnimatedCard";
 import { ScrollAnimatedSection } from "./components/ScrollAnimatedSection";
+import { TopBar } from "./components/TopBar";
+import { NavigationSidebar } from "./components/NavigationSidebar";
+import { FilterChips } from "./components/FilterChips";
+import { CreatePromptModal } from "./components/CreatePromptModal";
+import { SidePanel } from "./components/SidePanel";
+import { mockPrompts, Prompt } from "./data/prompts";
+import { variants } from "./src/lib/animations";
+import { ThemeProvider } from "./components/ThemeProvider";
+import { SoundProvider } from "./src/contexts/SoundContext";
+import { Toaster } from "./components/ui/sonner";
+import { toast } from "sonner";
 
 function AppContent() {
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
@@ -99,7 +98,7 @@ function AppContent() {
         className="fixed inset-0 pointer-events-none z-0 dark:block hidden"
         style={{
           background: `
-            radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 20% 80%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
             radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
             radial-gradient(circle at 40% 40%, rgba(120, 198, 255, 0.12) 0%, transparent 50%)
           `
@@ -118,13 +117,15 @@ function AppContent() {
 
       {/* Main Content */}
       <div 
-        className={`transition-all duration-300 ease-in-out`}
+        className="transition-all duration-300 ease-in-out"
         style={{
           paddingLeft: isSidebarCollapsed ? '72px' : '320px',
           minHeight: '100vh',
           width: '100vw',
           maxWidth: '100vw',
-          position: 'relative'
+          position: 'relative',
+          contain: 'layout style paint', // CSS containment for better performance
+          willChange: 'auto' // Only change when needed
         }}
       >
         {/* Top Bar */}
@@ -139,52 +140,25 @@ function AppContent() {
         <main className="pt-20 px-4 sm:px-6 pb-6 min-h-screen">
           {/* Search and Filters */}
           <ScrollAnimatedSection>
-            <motion.div
-              className="space-y-6 mb-8"
-              variants={variants.fadeIn}
-              initial="hidden"
-              animate="visible"
-              transition={{ delay: 0.1 }}
-              style={{ willChange: performance.willChange.opacity }}
-            >
+            <div className="space-y-6 mb-8">
               {/* Filter Chips */}
-              <motion.div
-                variants={variants.slideIn}
-                initial="hidden"
-                animate="visible"
-                transition={{ delay: 0.2 }}
-                style={{ willChange: performance.willChange.transform }}
-              >
+              <div>
                 <FilterChips
                   selectedTags={selectedTags}
                   onTagToggle={handleTagToggle}
                   onClearTags={handleClearTags}
                 />
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           </ScrollAnimatedSection>
 
           {/* Results Summary */}
           <ScrollAnimatedSection>
-            <motion.div
-              className="mb-6"
-              variants={variants.fadeIn}
-              initial="hidden"
-              animate="visible"
-              transition={{ delay: 0.4 }}
-              style={{ willChange: performance.willChange.opacity }}
-            >
-              <motion.p
-                className="text-sm text-muted-foreground"
-                variants={variants.slideIn}
-                initial="hidden"
-                animate="visible"
-                transition={{ delay: 0.5 }}
-                style={{ willChange: performance.willChange.transform }}
-              >
+            <div className="mb-6">
+              <p className="text-sm text-muted-foreground">
                 Showing {filteredPrompts.length} of {prompts.length} prompts
-              </motion.p>
-            </motion.div>
+              </p>
+            </div>
           </ScrollAnimatedSection>
 
           {/* Prompt Grid */}
@@ -196,41 +170,23 @@ function AppContent() {
                   className="grid gap-6"
                   style={{
                     gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))",
-                    willChange: performance.willChange.layout
+                    willChange: "layout"
                   }}
                   variants={variants.fadeIn}
                   initial="hidden"
                   animate="visible"
                   exit="hidden"
-                  transition={animations.tween.medium}
-                  layout
+                  transition={{ duration: 0.3, ease: "easeOut" }}
                 >
-                  <AnimatePresence>
-                    {filteredPrompts.map((prompt, index) => (
-                      <motion.div
-                        key={prompt.id}
-                        layout
-                        variants={variants.listItem}
-                        initial="hidden"
-                        animate="visible"
-                        exit="hidden"
-                        transition={{
-                          ...animations.spring.responsive,
-                          delay: animationUtils.createStaggerDelay(index, 0.015, 0.3),
-                          layout: animations.layout.smooth
-                        }}
-                        style={{
-                          willChange: performance.willChange.layout,
-                        }}
-                      >
-                        <ScrollAnimatedCard 
-                          prompt={prompt} 
-                          onOpen={handleOpenPrompt} 
-                          index={index}
-                        />
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
+                  {filteredPrompts.map((prompt, index) => (
+                    <div key={prompt.id}>
+                      <ScrollAnimatedCard 
+                        prompt={prompt} 
+                        onOpen={handleOpenPrompt} 
+                        index={index}
+                      />
+                    </div>
+                  ))}
                 </motion.div>
               ) : (
                 <motion.div
@@ -240,25 +196,25 @@ function AppContent() {
                   initial="hidden"
                   animate="visible"
                   exit="hidden"
-                  transition={animations.tween.medium}
-                  style={{ willChange: performance.willChange.opacity }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  style={{ willChange: "opacity" }}
                 >
                   {/* Logo with cute animation */}
                   <motion.div
                     className="w-96 h-80 mx-auto mb-10"
                     animate={{ 
-                      scale: [1, 1.05, 1],
-                      rotate: [0, 2, -2, 0]
+                      scale: [1, 1.02, 1], // Reduced scale change for better performance
+                      rotate: [0, 1, -1, 0] // Reduced rotation for better performance
                     }}
                     transition={{ 
-                      duration: 3,
+                      duration: 4, // Increased duration for smoother animation
                       repeat: Infinity,
-                      repeatDelay: 2
+                      repeatDelay: 3 // Increased delay between repeats
                     }}
-                    style={{ willChange: performance.willChange.transform }}
+                    style={{ willChange: "transform" }}
                   >
                     <img
-                      src="/Playful Food Brand Logo with Poptart Emblem.svg"
+                      src="/newlogo.svg"
                       alt="PromptArt Logo"
                       className="w-full h-full object-contain"
                     />
@@ -269,8 +225,8 @@ function AppContent() {
                     variants={variants.slideIn}
                     initial="hidden"
                     animate="visible"
-                    transition={{ delay: 0.1 }}
-                    style={{ willChange: performance.willChange.transform }}
+                    transition={{ delay: 0.1, duration: 0.3 }}
+                    style={{ willChange: "transform" }}
                   >
                     No prompts found! 🍰
                   </motion.h3>
@@ -280,8 +236,8 @@ function AppContent() {
                     variants={variants.slideIn}
                     initial="hidden"
                     animate="visible"
-                    transition={{ delay: 0.2 }}
-                    style={{ willChange: performance.willChange.transform }}
+                    transition={{ delay: 0.2, duration: 0.3 }}
+                    style={{ willChange: "transform" }}
                   >
                     Looks like your prompt pantry is empty! Time to bake some fresh ideas! ✨
                   </motion.p>
@@ -290,8 +246,8 @@ function AppContent() {
                     variants={variants.slideIn}
                     initial="hidden"
                     animate="visible"
-                    transition={{ delay: 0.3 }}
-                    style={{ willChange: performance.willChange.transform }}
+                    transition={{ delay: 0.3, duration: 0.3 }}
+                    style={{ willChange: "transform" }}
                   >
                     <button
                       onClick={() => setIsCreateModalOpen(true)}
@@ -330,7 +286,9 @@ function AppContent() {
 export default function App() {
   return (
     <ThemeProvider>
-      <AppContent />
+      <SoundProvider>
+        <AppContent />
+      </SoundProvider>
     </ThemeProvider>
   );
 }

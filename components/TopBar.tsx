@@ -1,7 +1,8 @@
-import { Plus } from "lucide-react";
-import { Button } from "./ui/button";
+import { motion } from "framer-motion";
 import { ThemeToggle } from "./ThemeToggle";
 import { SearchBar } from "./SearchBar";
+import { SoundControl } from "./SoundControl";
+import { CreatePromptButton } from "./CreatePromptButton";
 
 interface TopBarProps {
   isSidebarCollapsed: boolean;
@@ -25,13 +26,25 @@ export function TopBar({ isSidebarCollapsed, onCreatePrompt, searchQuery, onSear
         {/* Left side - App title/branding */}
         <div className="flex items-center gap-2">
           {/* Pop-Tart Logo */}
-          <div className="w-32 h-24 flex-shrink-0">
+          <motion.div
+            className="w-16 h-16"
+            animate={{ 
+              scale: [1, 1.02, 1],
+              rotate: [0, 1, -1, 0]
+            }}
+            transition={{ 
+              duration: 3,
+              repeat: Infinity,
+              repeatDelay: 2
+            }}
+            style={{ willChange: "transform" }}
+          >
             <img
-              src="/Playful Food Brand Logo with Poptart Emblem.svg"
+              src="/newlogo.svg"
               alt="PromptArt Logo"
               className="w-full h-full object-contain"
             />
-          </div>
+          </motion.div>
           
           {/* App Title */}
           <h1 
@@ -41,7 +54,7 @@ export function TopBar({ isSidebarCollapsed, onCreatePrompt, searchQuery, onSear
               textShadow: '0 2px 4px rgba(0,0,0,0.1)'
             }}
           >
-            PromptArt
+            prmptart
           </h1>
         </div>
 
@@ -54,25 +67,11 @@ export function TopBar({ isSidebarCollapsed, onCreatePrompt, searchQuery, onSear
           />
         </div>
 
-        {/* Right side - Actions */}
-        <div className="flex items-center gap-3">
-          {/* Theme Toggle */}
-          <div className="hidden sm:block">
-            <div className="p-2 rounded-xl bg-card/50 backdrop-blur-sm border border-border/30 shadow-sm hover:shadow-md hover:border-orange-200 dark:hover:border-orange-700 transition-all duration-300">
-              <ThemeToggle isCollapsed={true} />
-            </div>
-          </div>
-
-          {/* Create Prompt Button */}
-          <Button
-            onClick={onCreatePrompt}
-            className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 hover:from-orange-600 hover:via-pink-600 hover:to-purple-700 text-white px-4 py-2 rounded-xl shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-pink-500/30 border-0 transition-all duration-300 relative overflow-hidden group"
-          >
-            <span className="flex items-center gap-2 relative z-10">
-              <Plus className="h-4 w-4" />
-              <span>Create Prompt</span>
-            </span>
-          </Button>
+        {/* Right side controls */}
+        <div className="flex items-center gap-2">
+          <SoundControl />
+          <ThemeToggle />
+          <CreatePromptButton onClick={onCreatePrompt} isMenuOpen={false} />
         </div>
       </div>
     </header>

@@ -1,24 +1,21 @@
-import { Moon, Sun, Monitor, ChevronDown, Check } from "lucide-react";
-import { useTheme } from "./ThemeProvider";
+import { Moon, Sun, Monitor, ChevronDown } from "lucide-react";
+import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { useSound } from "../src/contexts/SoundContext";
 
 interface ThemeToggleProps {
   isCollapsed?: boolean;
 }
 
 export function ThemeToggle({ isCollapsed = false }: ThemeToggleProps) {
-  const { theme, setTheme, isDark } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const { playSound } = useSound();
 
   const themes = [
-    { id: "light" as const, icon: Sun, label: "Light" },
-    { id: "dark" as const, icon: Moon, label: "Dark" },
-    { id: "system" as const, icon: Monitor, label: "System" },
+    { id: 'light', label: 'Light', icon: Sun, description: 'Clean and bright' },
+    { id: 'dark', label: 'Dark', icon: Moon, description: 'Easy on the eyes' },
+    { id: 'system', label: 'System', icon: Monitor, description: 'Follows your OS' }
   ];
 
   const currentTheme = themes.find(t => t.id === theme) || themes[2];
@@ -41,7 +38,10 @@ export function ThemeToggle({ isCollapsed = false }: ThemeToggleProps) {
           {themes.map((themeOption) => (
             <DropdownMenuItem
               key={themeOption.id}
-              onClick={() => setTheme(themeOption.id)}
+              onClick={() => {
+                setTheme(themeOption.id);
+                playSound("THEME_SWITCH");
+              }}
             >
               {themeOption.label}
             </DropdownMenuItem>
@@ -61,7 +61,7 @@ export function ThemeToggle({ isCollapsed = false }: ThemeToggleProps) {
         >
           <div className="flex items-center gap-3">
             <div className={`p-1.5 rounded-lg ${
-              isDark 
+              theme === 'dark' 
                 ? 'bg-blue-900/20 text-blue-400' 
                 : 'bg-blue-100 text-blue-600'
             }`}>
@@ -86,7 +86,10 @@ export function ThemeToggle({ isCollapsed = false }: ThemeToggleProps) {
         {themes.map((themeOption) => (
           <DropdownMenuItem
             key={themeOption.id}
-            onClick={() => setTheme(themeOption.id)}
+            onClick={() => {
+              setTheme(themeOption.id);
+              playSound("THEME_SWITCH");
+            }}
           >
             {themeOption.label}
           </DropdownMenuItem>

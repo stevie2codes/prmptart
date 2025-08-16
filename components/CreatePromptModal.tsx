@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
@@ -6,8 +7,8 @@ import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Textarea } from "./ui/textarea";
 import { Badge } from "./ui/badge";
-import { useState } from "react";
-import { animations, variants, performance } from "../src/lib/animations";
+import { variants, animations, performance } from "../src/lib/animations";
+import { useSound } from "../src/contexts/SoundContext";
 
 interface CreatePromptModalProps {
   isOpen: boolean;
@@ -15,38 +16,56 @@ interface CreatePromptModalProps {
   onSave: (prompt: any) => void;
 }
 
+interface FormData {
+  title: string;
+  summary: string;
+  content: string;
+  phase: string;
+  impact: string;
+  category: string;
+  tags: string[];
+  exampleOutput: string;
+}
+
 export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModalProps) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     title: "",
     summary: "",
     content: "",
-    phase: "",
-    impact: "",
+    phase: "Research",
+    impact: "High Impact",
     category: "",
-    tags: [] as string[],
-    exampleOutput: "",
+    tags: [],
+    exampleOutput: ""
   });
-
   const [newTag, setNewTag] = useState("");
   const [showExample, setShowExample] = useState(false);
+  const { playSound } = useSound();
+
+  // Play sound when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      playSound('MODAL_OPEN');
+    }
+  }, [isOpen, playSound]);
 
   const handleClose = () => {
+    playSound('POP_CLOSE');
     setFormData({
       title: "",
       summary: "",
       content: "",
-      phase: "",
-      impact: "",
+      phase: "Research",
+      impact: "High Impact",
       category: "",
       tags: [],
-      exampleOutput: "",
+      exampleOutput: ""
     });
-    setNewTag("");
-    setShowExample(false);
     onClose();
   };
 
   const handleSave = () => {
+    playSound('FORM_SUBMIT');
     if (formData.title && formData.content && formData.phase) {
       onSave({
         ...formData,

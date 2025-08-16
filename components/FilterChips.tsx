@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { mockPrompts } from "../data/prompts";
 import { motion, AnimatePresence } from "framer-motion";
 import { animations, variants, performance, animationUtils } from "../src/lib/animations";
+import { useSound } from "../src/contexts/SoundContext";
 
 interface FilterChipsProps {
   selectedTags: string[];
@@ -12,6 +13,18 @@ interface FilterChipsProps {
 }
 
 export function FilterChips({ selectedTags, onTagToggle, onClearTags }: FilterChipsProps) {
+  const { playSound } = useSound();
+
+  const handleTagToggle = (tag: string) => {
+    playSound('FILTER_SELECT');
+    onTagToggle(tag);
+  };
+
+  const handleClearTags = () => {
+    playSound('BUTTON_PRESS');
+    onClearTags();
+  };
+
   // Get all unique tags from prompts with their counts
   const allTags = mockPrompts.reduce((acc, prompt) => {
     prompt.tags.forEach(tag => {
@@ -68,7 +81,7 @@ export function FilterChips({ selectedTags, onTagToggle, onClearTags }: FilterCh
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={onClearTags}
+                onClick={handleClearTags}
                 className="h-6 px-2 text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200"
               >
                 <X className="h-3 w-3 mr-1" />
@@ -110,7 +123,7 @@ export function FilterChips({ selectedTags, onTagToggle, onClearTags }: FilterCh
                 <Badge
                   variant="secondary"
                   className="text-xs font-medium bg-primary/20 text-primary-foreground hover:bg-primary/30 transition-colors duration-200 cursor-pointer"
-                  onClick={() => onTagToggle(tag)}
+                  onClick={() => handleTagToggle(tag)}
                 >
                   {tag}
                   <X className="h-3 w-3 ml-1.5 opacity-70 hover:opacity-100 transition-opacity duration-200" />
@@ -145,7 +158,7 @@ export function FilterChips({ selectedTags, onTagToggle, onClearTags }: FilterCh
                   ? 'bg-primary text-primary-foreground border-primary'
                   : 'bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground border-border/50'
               }`}
-              onClick={() => onTagToggle(tag)}
+              onClick={() => handleTagToggle(tag)}
             >
               {tag}
               <span className="ml-1.5 text-xs opacity-60">({allTags[tag]})</span>

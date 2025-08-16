@@ -1,5 +1,6 @@
 import { Search, X } from "lucide-react";
 import { useState, useRef } from "react";
+import { useSound } from "../src/contexts/SoundContext";
 
 interface SearchBarProps {
   value: string;
@@ -10,14 +11,21 @@ interface SearchBarProps {
 export function SearchBar({ value, onChange, placeholder = "Search prompts..." }: SearchBarProps) {
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { playSound } = useSound();
 
   const handleClear = () => {
     onChange("");
     inputRef.current?.focus();
+    playSound("BUTTON_PRESS");
   };
 
   const handleBlur = () => {
     setIsFocused(false);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(e.target.value);
+    playSound("SEARCH_TYPING");
   };
 
   return (
@@ -33,7 +41,7 @@ export function SearchBar({ value, onChange, placeholder = "Search prompts..." }
           ref={inputRef}
           type="text"
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={handleInputChange}
           onFocus={() => setIsFocused(true)}
           onBlur={handleBlur}
           placeholder={placeholder}

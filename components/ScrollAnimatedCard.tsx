@@ -2,7 +2,6 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { PromptCard } from "./PromptCard";
 import { Prompt } from "../data/prompts";
-import { animations, variants, performance } from "../src/lib/animations";
 
 interface ScrollAnimatedCardProps {
   prompt: Prompt;
@@ -14,8 +13,8 @@ export function ScrollAnimatedCard({ prompt, onOpen, index }: ScrollAnimatedCard
   const ref = useRef(null);
   const isInView = useInView(ref, { 
     once: true, 
-    margin: "-100px 0px -100px 0px",
-    amount: 0.3 
+    margin: "-50px 0px -50px 0px", // Reduced margin for better performance
+    amount: 0.1 // Reduced amount for faster triggering
   });
 
   return (
@@ -23,35 +22,31 @@ export function ScrollAnimatedCard({ prompt, onOpen, index }: ScrollAnimatedCard
       ref={ref}
       initial={{ 
         opacity: 0, 
-        y: 50, 
-        scale: 0.95,
-        rotateX: 15
+        y: 20, // Reduced from 50 for subtler animation
+        scale: 0.98 // Reduced from 0.95 for subtler animation
       }}
       animate={isInView ? {
         opacity: 1,
         y: 0,
-        scale: 1,
-        rotateX: 0
+        scale: 1
       } : {
         opacity: 0,
-        y: 50,
-        scale: 0.95,
-        rotateX: 15
+        y: 20,
+        scale: 0.98
       }}
       transition={{
-        ...animations.spring.responsive,
-        delay: index * 0.1, // Stagger the animations
-        duration: 0.6,
-        ease: [0.25, 0.46, 0.45, 0.94]
+        type: "tween", // Use tween instead of spring for better performance
+        duration: 0.4, // Reduced from 0.6
+        ease: "easeOut", // Simplified easing
+        delay: index * 0.05 // Reduced stagger delay from 0.1 to 0.05
       }}
       style={{ 
-        willChange: performance.willChange.transform,
-        transformStyle: "preserve-3d"
+        willChange: "transform", // Simplified willChange
+        transform: "translateZ(0)" // Force hardware acceleration
       }}
       whileHover={{
-        y: -8,
-        rotateX: 5,
-        transition: { duration: 0.3, ease: "easeOut" }
+        y: -4, // Reduced from -8 for subtler hover
+        transition: { duration: 0.2, ease: "easeOut" } // Faster hover
       }}
       className="transform-gpu"
     >

@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
 import { ArrowRight, Copy, CheckCircle } from "lucide-react";
 import { Prompt } from "../data/prompts";
-import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
+import { animations, performance, animationUtils } from "../src/lib/animations";
 import { useState } from "react";
-import { animations, variants, performance, animationUtils } from "../src/lib/animations";
+import { useSound } from "../src/contexts/SoundContext";
 
 interface PromptCardProps {
   prompt: Prompt;
@@ -13,25 +14,23 @@ interface PromptCardProps {
 
 export function PromptCard({ prompt, onOpen }: PromptCardProps) {
   const [isCopied, setIsCopied] = useState(false);
+  const { playSound } = useSound();
 
-  const handleCopy = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    
+  const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(prompt.content);
       setIsCopied(true);
+      playSound('COPY_SUCCESS');
       setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
-      // Fallback for older browsers
-      const textArea = document.createElement('textarea');
-      textArea.value = prompt.content;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
+      console.error('Failed to copy text: ', err);
+      playSound('ERROR');
     }
+  };
+
+  const handleCardClick = () => {
+    playSound('CARD_OPEN');
+    onOpen(prompt);
   };
 
   const getImpactIcon = () => {
@@ -62,7 +61,7 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
   return (
     <motion.div
       className="prompt-card-container bg-card/50 backdrop-blur-sm border border-border/50 rounded-3xl p-6 shadow-lg shadow-black/5 dark:shadow-black/20 hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30 transition-all duration-300 cursor-pointer group"
-      onClick={() => onOpen(prompt)}
+      onClick={handleCardClick}
       whileHover={animations.hover.lift}
       whileTap={animations.tap.scale}
       layout
@@ -140,7 +139,10 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
       {/* Actions */}
       <div className="flex items-center justify-between pt-4 border-t border-border/30">
         <Button
-          onClick={handleCopy}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleCopy();
+          }}
           variant="ghost"
           size="sm"
           className="text-xs text-muted-foreground hover:text-foreground transition-colors duration-200 p-2 h-auto"
@@ -191,9 +193,9 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
           <motion.div
             className="absolute inset-0 rounded-xl opacity-0 hover:opacity-100 transition-opacity duration-300"
             style={{
-              background: 'linear-gradient(90deg, rgba(249, 115, 22, 0.1), rgba(236, 72, 153, 0.1), rgba(168, 85, 247, 0.1))'
+              background: 'linear-gradient(90deg, rgba(249, 115, 22, 0.1), rgba(236, 72, 153, 0.1), rgba(168, 85, 247, 0.1))',
+              willChange: performance.willChange.opacity
             }}
-            style={{ willChange: performance.willChange.opacity }}
           />
         </Button>
       </div>
