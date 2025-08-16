@@ -948,10 +948,9 @@ function AppContent() {
         .light .synthwave-icon-container {
           /* Reset any synthwave styles for light mode */
           background: var(--card) !important;
-          
+          border: 1px solid var(--border) !important;
           color: var(--foreground) !important;
           text-shadow: none !important;
-        
         }
         
         .light .synthwave-title {
