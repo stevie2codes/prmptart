@@ -1,7 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, Palette, Users, Code, Plus, X, ChevronDown } from "lucide-react";
+import { ChevronLeft, Palette, Users, Code, Plus, X, ChevronDown, Heart, Search } from "lucide-react";
 import { Button } from "./ui/button";
 import { useSound } from "../src/contexts/SoundContext";
+import { SearchBar } from "./SearchBar";
+import { useRef, useEffect } from "react";
 
 interface NavigationSidebarProps {
   isCollapsed: boolean;
@@ -10,6 +12,10 @@ interface NavigationSidebarProps {
   onPhaseSelect: (phase: string) => void;
   selectedCategory: 'design' | 'pm' | 'engineering' | null;
   onCategorySelect: (category: 'design' | 'pm' | 'engineering') => void;
+  showFavorites: boolean;
+  onFavoritesToggle: () => void;
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
 }
 
 export function NavigationSidebar({ 
@@ -18,9 +24,24 @@ export function NavigationSidebar({
   selectedPhase, 
   onPhaseSelect, 
   selectedCategory, 
-  onCategorySelect 
+  onCategorySelect,
+  showFavorites,
+  onFavoritesToggle,
+  searchQuery,
+  onSearchChange
 }: NavigationSidebarProps) {
   const { playSound } = useSound();
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Focus search input when sidebar expands
+  useEffect(() => {
+    if (!isCollapsed && searchInputRef.current) {
+      // Small delay to ensure the search bar is rendered
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 100);
+    }
+  }, [isCollapsed]);
 
   const handleToggle = () => {
     playSound('SIDEBAR_TOGGLE');
@@ -117,39 +138,92 @@ export function NavigationSidebar({
       <div className="flex flex-col h-full">
         {/* Header */}
         <motion.div 
-          className="flex items-center justify-between p-6 border-b border-sidebar-border/30"
+          className={`${isCollapsed ? 'flex flex-col items-center p-4' : 'flex items-center justify-between p-6'}`}
           // Account for top bar
           layout
         >
-          <AnimatePresence mode="wait">
-            {!isCollapsed && (
-              <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                transition={{ duration: 0.2 }}
+          {/* Logo and Title */}
+          <motion.div
+            className={`flex items-center gap-2 ${isCollapsed ? 'cursor-pointer mb-4' : ''}`}
+            onClick={isCollapsed ? handleToggle : undefined}
+            whileHover={isCollapsed ? { scale: 1.05 } : {}}
+            whileTap={isCollapsed ? { scale: 0.95 } : {}}
+          >
+            <img src="/newlogo.svg" alt="Prompt Pantry" className="h-12 w-12" />
+            <AnimatePresence mode="wait">
+              {!isCollapsed && (
+                <h1 
+                className="text-2xl font-bold bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 bg-clip-text text-transparent flex-shrink-0"
+                style={{ 
+                  fontFamily: '"Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                }}
               >
-                <h2 className="text-lg font-medium text-sidebar-foreground">
-                  Prompt Library
-                </h2>
-              </motion.div>
+                prmptart
+              </h1>
+              )}
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Search Icon when collapsed */}
+          <AnimatePresence mode="wait">
+            {isCollapsed && (
+              <motion.button
+                key="search-icon"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.2 }}
+                onClick={handleToggle}
+                className="w-full text-left p-3 rounded-xl transition-all duration-200 font-medium text-sm border border-transparent text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                layout
+              >
+                <div className="flex items-center gap-3">
+                  <Search className="h-4 w-4 mx-auto" />
+                </div>
+              </motion.button>
             )}
           </AnimatePresence>
           
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleToggle}
-            className="h-8 w-8 p-0 hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground rounded-xl"
-          >
-            <motion.div
-              animate={{ rotate: isCollapsed ? 180 : 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </motion.div>
-          </Button>
+          {/* Toggle Button - Only visible when expanded */}
+          <AnimatePresence mode="wait">
+            {!isCollapsed && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.2 }}
+                onClick={handleToggle}
+                className="h-12 w-12 p-0 hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground rounded-xl flex items-center justify-center"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </motion.button>
+            )}
+          </AnimatePresence>
         </motion.div>
+
+        {/* Search Bar Section - Below header, replacing divider */}
+        <AnimatePresence mode="wait">
+          {!isCollapsed && (
+            <motion.div
+              key="search-bar-section"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="px-6 pb-4"
+            >
+              <SearchBar
+                ref={searchInputRef}
+                value={searchQuery}
+                onChange={onSearchChange}
+                placeholder="Search prompts..."
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Navigation Content */}
         <div className="flex-1 overflow-hidden">
@@ -163,7 +237,12 @@ export function NavigationSidebar({
               return (
                 <div key={category.id} className="space-y-1">
                   <motion.button
-                    onClick={() => handleCategorySelect(category.id)}
+                    onClick={() => {
+                      if (isCollapsed) {
+                        onToggle(); // Expand sidebar first
+                      }
+                      handleCategorySelect(category.id);
+                    }}
                     className={`w-full text-left p-3 rounded-xl transition-all duration-200 font-medium text-sm border border-transparent text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -208,7 +287,12 @@ export function NavigationSidebar({
                         {category.phases.map((phase, index) => (
                           <motion.button
                             key={phase.id}
-                            onClick={() => onPhaseSelect(phase.id)}
+                            onClick={() => {
+                              if (isCollapsed) {
+                                onToggle(); // Expand sidebar first
+                              }
+                              onPhaseSelect(phase.id);
+                            }}
                             className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 font-medium text-s border ${
                               selectedPhase === phase.id 
                                 ? `border ${getPhaseColorClasses(phase.color, true)}`
@@ -234,7 +318,12 @@ export function NavigationSidebar({
                         {/* Clear Selection Option */}
                         {selectedPhase && (
                           <motion.button
-                            onClick={() => onPhaseSelect(selectedPhase)}
+                            onClick={() => {
+                              if (isCollapsed) {
+                                onToggle(); // Expand sidebar first
+                              }
+                              onPhaseSelect(selectedPhase);
+                            }}
                             className="w-full text-left px-3 py-2 rounded-lg transition-all duration-200 font-medium text-xs border border-transparent text-sidebar-foreground/50 hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground mt-2 border-t border-sidebar-border/20 pt-3"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -275,6 +364,87 @@ export function NavigationSidebar({
                 </div>
               );
             })}
+
+            {/* Divider */}
+            <AnimatePresence>
+              {!isCollapsed && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="my-4 border-t border-sidebar-border/30"
+                />
+              )}
+            </AnimatePresence>
+
+            {/* Favorites Section */}
+            <AnimatePresence>
+              {!isCollapsed && (
+                <motion.div
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  transition={{ duration: 0.2 }}
+                  className="mb-2"
+                >
+                  <span className="text-xs font-medium text-sidebar-foreground/50 uppercase tracking-wider">
+                    Personal
+                  </span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <motion.button
+              onClick={() => {
+                if (isCollapsed) {
+                  onToggle(); // Expand sidebar first
+                }
+                onFavoritesToggle();
+              }}
+              className={`w-full text-left p-3 rounded-xl transition-all duration-200 font-medium text-sm border border-transparent text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground ${
+                showFavorites ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-700' : ''
+              }`}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              layout
+            >
+              <div className="flex items-center gap-3">
+                <Heart className={`h-4 w-4 ${isCollapsed ? 'mx-auto' : ''}`} />
+                <AnimatePresence mode="wait">
+                  {!isCollapsed && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex items-center justify-between flex-1"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span>Favorites</span>
+                        {(() => {
+                          try {
+                            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+                            return favorites.length > 0 ? (
+                              <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-medium bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 rounded-full">
+                                {favorites.length}
+                              </span>
+                            ) : null;
+                          } catch {
+                            return null;
+                          }
+                        })()}
+                      </div>
+                      <motion.div
+                        animate={{ rotate: showFavorites ? 180 : 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <ChevronDown className="h-4 w-4 text-sidebar-foreground/50" />
+                      </motion.div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.button>
           </div>
         </div>
 

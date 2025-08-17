@@ -2,7 +2,7 @@
 export const SOUNDS = {
   // UI Interactions
   CLICK: {
-    url: 'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3',
+    url: 'https://assets.mixkit.co/active_storage/sfx/2584/2584-preview.mp3',
     volume: 0.3,
     preload: true
   },
@@ -35,6 +35,12 @@ export const SOUNDS = {
   CARD_HOVER: {
     url: 'https://assets.mixkit.co/active_storage/sfx/2575/2575-preview.mp3',
     volume: 0.15,
+    preload: true
+  },
+
+  SWOOSH: {
+    url: 'https://assets.mixkit.co/active_storage/sfx/2586/2586-preview.mp3',
+    volume: 0.25,
     preload: true
   },
   
@@ -93,6 +99,12 @@ export const SOUNDS = {
   BUTTON_PRESS: {
     url: 'https://assets.mixkit.co/active_storage/sfx/2584/2584-preview.mp3',
     volume: 0.25,
+    preload: true
+  },
+
+  BUTTON_SOFT_DOUBLE: {
+    url: 'https://assets.mixkit.co/active_storage/sfx/2585/2585-preview.mp3',
+    volume: 0.3,
     preload: true
   }
 };

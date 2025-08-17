@@ -42,7 +42,7 @@ export function SidePanel({ prompt, isOpen, onClose }: SidePanelProps) {
     try {
       await navigator.clipboard.writeText(prompt.content);
       setIsCopied(true);
-      playSound('COPY_SUCCESS');
+      playSound('FILTER_SELECT');
       setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
       // Fallback for older browsers
@@ -53,7 +53,7 @@ export function SidePanel({ prompt, isOpen, onClose }: SidePanelProps) {
       document.execCommand('copy');
       document.body.removeChild(textArea);
       setIsCopied(true);
-      playSound('COPY_SUCCESS');
+      playSound('FILTER_SELECT');
       setTimeout(() => setIsCopied(false), 2000);
     }
   };

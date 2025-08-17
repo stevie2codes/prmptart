@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
-import { ArrowRight, Copy, CheckCircle } from "lucide-react";
+import { ArrowRight, Copy, CheckCircle, Heart } from "lucide-react";
 import { Prompt } from "../data/prompts";
 import { animations, performance, animationUtils } from "../src/lib/animations";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSound } from "../src/contexts/SoundContext";
 
 interface PromptCardProps {
@@ -14,13 +14,20 @@ interface PromptCardProps {
 
 export function PromptCard({ prompt, onOpen }: PromptCardProps) {
   const [isCopied, setIsCopied] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
   const { playSound } = useSound();
+
+  // Load favorite status from localStorage on component mount
+  useEffect(() => {
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    setIsFavorited(favorites.includes(prompt.id));
+  }, [prompt.id]);
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(prompt.content);
       setIsCopied(true);
-      playSound('COPY_SUCCESS');
+      playSound('FILTER_SELECT');
       setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy text: ', err);
@@ -29,8 +36,24 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
   };
 
   const handleCardClick = () => {
-    playSound('CARD_OPEN');
     onOpen(prompt);
+  };
+
+  const handleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click when clicking heart
+    playSound('FILTER_SELECT');
+    
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    let newFavorites;
+    
+    if (isFavorited) {
+      newFavorites = favorites.filter((id: string) => id !== prompt.id);
+    } else {
+      newFavorites = [...favorites, prompt.id];
+    }
+    
+    localStorage.setItem('favorites', JSON.stringify(newFavorites));
+    setIsFavorited(!isFavorited);
   };
 
   const getImpactIcon = () => {
@@ -76,14 +99,24 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
           {prompt.phase}
         </Badge>
         
-        <motion.div
-          className="flex items-center gap-1 text-xs text-muted-foreground/70 bg-muted/50 px-2 py-1 rounded-full transition-colors duration-300"
-          whileHover={animations.hover.scale}
+        {/* Favorite Button */}
+        <motion.button
+          onClick={handleFavorite}
+          className={`p-2 rounded-full transition-all duration-200 ${
+            isFavorited 
+              ? 'text-red-500 bg-red-100/50 dark:bg-red-900/30' 
+              : 'text-muted-foreground/50 hover:text-red-400 hover:bg-red-100/30 dark:hover:bg-red-900/20'
+          }`}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           style={{ willChange: performance.willChange.transform }}
         >
-          <span className="text-sm">{getImpactIcon()}</span>
-          <span className="font-medium">{prompt.impact}</span>
-        </motion.div>
+          <Heart 
+            className={`h-4 w-4 transition-all duration-200 ${
+              isFavorited ? 'fill-current' : ''
+            }`}
+          />
+        </motion.button>
       </div>
 
       {/* Content */}
@@ -168,7 +201,7 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
         </Button>
 
         <Button
-          className="tasty-gradient-button bg-transparent text-foreground text-xs px-4 py-2 h-auto rounded-xl border-2 transition-all duration-300 relative overflow-hidden hover:bg-gradient-to-r hover:from-orange-500/10 hover:via-pink-500/10 hover:to-purple-600/10"
+          className="tasty-gradient-button bg-transparent text-foreground text-xs px-4 py-2 h-auto border-2 transition-all duration-300 relative overflow-hidden hover:bg-gradient-to-r hover:from-orange-500/10 hover:via-pink-500/10 hover:to-purple-600/10"
           style={{
             background: 'transparent',
             borderImage: 'linear-gradient(90deg, #f97316, #ec4899, #a855f7) 1',

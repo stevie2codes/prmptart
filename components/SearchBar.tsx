@@ -1,6 +1,5 @@
 import { Search, X } from "lucide-react";
-import { useState, useRef } from "react";
-import { useSound } from "../src/contexts/SoundContext";
+import { useState, useRef, forwardRef } from "react";
 
 interface SearchBarProps {
   value: string;
@@ -8,15 +7,17 @@ interface SearchBarProps {
   placeholder?: string;
 }
 
-export function SearchBar({ value, onChange, placeholder = "Search prompts..." }: SearchBarProps) {
-  const [isFocused, setIsFocused] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const { playSound } = useSound();
+export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(
+  ({ value, onChange, placeholder = "Search prompts..." }, ref) => {
+    const [isFocused, setIsFocused] = useState(false);
+    const inputRef = useRef<HTMLInputElement>(null);
+    const finalRef = ref || inputRef;
 
   const handleClear = () => {
     onChange("");
-    inputRef.current?.focus();
-    playSound("BUTTON_PRESS");
+    if (typeof finalRef === 'object' && finalRef?.current) {
+      finalRef.current.focus();
+    }
   };
 
   const handleBlur = () => {
@@ -25,7 +26,6 @@ export function SearchBar({ value, onChange, placeholder = "Search prompts..." }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value);
-    playSound("SEARCH_TYPING");
   };
 
   return (
@@ -38,14 +38,14 @@ export function SearchBar({ value, onChange, placeholder = "Search prompts..." }
 
         {/* Input Field */}
         <input
-          ref={inputRef}
+          ref={finalRef}
           type="text"
           value={value}
           onChange={handleInputChange}
           onFocus={() => setIsFocused(true)}
           onBlur={handleBlur}
           placeholder={placeholder}
-          className="w-full h-12 pl-12 pr-12 text-foreground placeholder-muted-foreground bg-white/80 dark:bg-gray-800/80 border border-orange-200/50 dark:border-orange-700/50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/60 backdrop-blur-sm transition-all duration-200 shadow-lg shadow-orange-500/10"
+          className="w-full h-12 pl-12 pr-12 text-foreground placeholder-muted-foreground bg-gray-100/90 dark:bg-gray-800/80 border border-orange-200/50 dark:border-orange-700/50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/60 backdrop-blur-sm transition-all duration-200 shadow-lg shadow-orange-500/10"
           style={{ 
             fontSize: '16px'
           }}
@@ -73,4 +73,4 @@ export function SearchBar({ value, onChange, placeholder = "Search prompts..." }
       )}
     </div>
   );
-}
+});

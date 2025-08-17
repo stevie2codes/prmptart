@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Plus, Sparkles } from "lucide-react";
 import { Button } from "./ui/button";
+import { useSound } from "../src/contexts/SoundContext";
 
 interface CreatePromptButtonProps {
   onClick: () => void;
@@ -10,6 +11,12 @@ interface CreatePromptButtonProps {
 
 export function CreatePromptButton({ onClick, isMenuOpen }: CreatePromptButtonProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const { playSound } = useSound();
+
+  const handleClick = () => {
+    playSound('BUTTON_SOFT_DOUBLE');
+    onClick();
+  };
 
   return (
     <motion.div
@@ -39,7 +46,7 @@ export function CreatePromptButton({ onClick, isMenuOpen }: CreatePromptButtonPr
         
         {/* Main button */}
         <Button
-          onClick={onClick}
+          onClick={handleClick}
           className="relative bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-2xl h-14 px-6 rounded-2xl backdrop-blur-sm"
           style={{
             background: "linear-gradient(135deg, rgb(37, 99, 235) 0%, rgb(147, 51, 234) 100%)",

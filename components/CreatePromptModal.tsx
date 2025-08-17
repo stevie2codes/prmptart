@@ -50,7 +50,7 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
   }, [isOpen, playSound]);
 
   const handleClose = () => {
-    playSound('POP_CLOSE');
+    playSound('FILTER_SELECT');
     setFormData({
       title: "",
       summary: "",

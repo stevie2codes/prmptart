@@ -13,8 +13,11 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import { SoundProvider } from "./src/contexts/SoundContext";
 import { Toaster } from "./components/ui/sonner";
 import { toast } from "sonner";
+import { useSound } from "./src/contexts/SoundContext";
+import { Heart } from "lucide-react";
 
 function AppContent() {
+  const { playSound } = useSound();
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPhase, setSelectedPhase] = useState<string | null>(null);
@@ -23,6 +26,7 @@ function AppContent() {
   const [prompts, setPrompts] = useState<Prompt[]>(mockPrompts);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<'design' | 'pm' | 'engineering' | null>('design');
+  const [showFavorites, setShowFavorites] = useState(false);
 
   // Filter prompts based on search, category, and filters
   const filteredPrompts = useMemo(() => {
@@ -39,9 +43,14 @@ function AppContent() {
       const matchesTags = selectedTags.length === 0 || 
         selectedTags.some(tag => prompt.tags.includes(tag));
       
-      return matchesSearch && matchesCategory && matchesPhase && matchesTags;
+      const matchesFavorites = !showFavorites || (() => {
+        const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+        return favorites.includes(prompt.id);
+      })();
+      
+      return matchesSearch && matchesCategory && matchesPhase && matchesTags && matchesFavorites;
     });
-  }, [prompts, searchQuery, selectedCategory, selectedPhase, selectedTags]);
+  }, [prompts, searchQuery, selectedCategory, selectedPhase, selectedTags, showFavorites]);
 
   const handleOpenPrompt = (prompt: Prompt) => {
     setSelectedPrompt(prompt);
@@ -59,12 +68,37 @@ function AppContent() {
     });
   };
 
-  const handlePhaseSelect = (phase: string) => {
-    setSelectedPhase(prev => prev === phase ? null : phase);
+  const handleFavoritesToggle = () => {
+    playSound('FILTER_SELECT');
+    setShowFavorites(prev => !prev);
+    // Clear other filters when showing favorites
+    if (!showFavorites) {
+      setSelectedCategory(null);
+      setSelectedPhase(null);
+      setSelectedTags([]);
+    }
   };
 
   const handleCategorySelect = (category: 'design' | 'pm' | 'engineering') => {
+    playSound('FILTER_SELECT');
+    // If switching from favorites, turn off favorites mode
+    if (showFavorites) {
+      setShowFavorites(false);
+    }
+    // Toggle category selection
     setSelectedCategory(prev => prev === category ? null : category);
+    // Clear phase when changing category
+    setSelectedPhase(null);
+  };
+
+  const handlePhaseSelect = (phase: string) => {
+    playSound('FILTER_SELECT');
+    // If switching from favorites, turn off favorites mode
+    if (showFavorites) {
+      setShowFavorites(false);
+    }
+    // Toggle phase selection
+    setSelectedPhase(prev => prev === phase ? null : phase);
   };
 
   return (
@@ -93,6 +127,12 @@ function AppContent() {
         }}
       />
 
+      {/* Top Bar - Fixed at top */}
+      <TopBar
+        isSidebarCollapsed={isSidebarCollapsed}
+        onCreatePrompt={() => setIsCreateModalOpen(true)}
+      />
+
       {/* Navigation Sidebar */}
       <NavigationSidebar
         isCollapsed={isSidebarCollapsed}
@@ -101,6 +141,10 @@ function AppContent() {
         onPhaseSelect={handlePhaseSelect}
         selectedCategory={selectedCategory}
         onCategorySelect={handleCategorySelect}
+        showFavorites={showFavorites}
+        onFavoritesToggle={handleFavoritesToggle}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
 
       {/* Main Content */}
@@ -116,28 +160,25 @@ function AppContent() {
           willChange: 'auto' // Only change when needed
         }}
       >
-        {/* Top Bar */}
-        <TopBar
-          isSidebarCollapsed={isSidebarCollapsed}
-          onCreatePrompt={() => setIsCreateModalOpen(true)}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-        />
-
         {/* Main Content Area */}
-        <main className="pt-20 px-4 sm:px-6 pb-6 min-h-screen">
+        <main className="pt-24 px-4 sm:px-6 pb-6 min-h-screen">
           {/* Page Header */}
           <ScrollAnimatedSection>
             <div className="mb-8">
               <motion.h1 
-                className="text-4xl font-bold text-foreground mb-2"
+                className="text-4xl font-medium text-foreground mb-2"
                 variants={variants.slideIn}
                 initial="hidden"
                 animate="visible"
                 transition={{ delay: 0.1 }}
                 style={{ willChange: "transform" }}
               >
-                Prompt Library
+                {showFavorites 
+                  ? 'Favorite Prompts' 
+                  : selectedCategory 
+                    ? `${selectedCategory === 'design' ? 'Design' : selectedCategory === 'pm' ? 'PM' : 'Engineering'} Prompts`
+                    : 'Prompt Library'
+                }
               </motion.h1>
               <motion.p 
                 className="text-lg text-muted-foreground"
@@ -147,51 +188,76 @@ function AppContent() {
                 transition={{ delay: 0.2 }}
                 style={{ willChange: "transform" }}
               >
-                Discover and organize your AI prompts for better workflows
+                {showFavorites 
+                  ? 'Your saved and favorite prompts ✨' 
+                  : selectedCategory
+                    ? `Browse ${selectedCategory === 'design' ? 'design' : selectedCategory === 'pm' ? 'product management' : 'engineering'} prompts and workflows`
+                    : 'Discover and organize your AI prompts for better workflows'
+                }
               </motion.p>
             </div>
           </ScrollAnimatedSection>
 
           {/* Search and Filters */}
-          <div className="space-y-6 mb-8">
-            {/* Tag Filter */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <h3 className="text-sm font-medium text-foreground">Filter by Tags</h3>
-                <span className="text-xs text-muted-foreground">
-                  ({mockPrompts.flatMap(prompt => prompt.tags).filter((tag, index, self) => self.indexOf(tag) === index).length} available)
-                </span>
+          {!showFavorites && (
+            <div className="space-y-6 mb-8">
+              {/* Tag Filter */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-medium text-foreground">Filter by Tags</h3>
+                  <span className="text-xs text-muted-foreground">
+                    ({mockPrompts.flatMap(prompt => prompt.tags).filter((tag, index, self) => self.indexOf(tag) === index).length} available)
+                  </span>
+                </div>
+                <MultiSelect
+                  options={(() => {
+                    const allTags = mockPrompts.flatMap(prompt => prompt.tags);
+                    const tagCounts = allTags.reduce((acc, tag) => {
+                      acc[tag] = (acc[tag] || 0) + 1;
+                      return acc;
+                    }, {} as Record<string, number>);
+                    
+                    return Object.entries(tagCounts)
+                      .sort(([, a], [, b]) => b - a)
+                      .map(([tag, count]) => ({
+                        value: tag,
+                        label: tag,
+                        count
+                      }));
+                  })()}
+                  selectedValues={selectedTags}
+                  onSelectionChange={setSelectedTags}
+                  placeholder="Select tags to filter..."
+                  className="max-w-md"
+                />
               </div>
-              <MultiSelect
-                options={(() => {
-                  const allTags = mockPrompts.flatMap(prompt => prompt.tags);
-                  const tagCounts = allTags.reduce((acc, tag) => {
-                    acc[tag] = (acc[tag] || 0) + 1;
-                    return acc;
-                  }, {} as Record<string, number>);
-                  
-                  return Object.entries(tagCounts)
-                    .sort(([, a], [, b]) => b - a)
-                    .map(([tag, count]) => ({
-                      value: tag,
-                      label: tag,
-                      count
-                    }));
-                })()}
-                selectedValues={selectedTags}
-                onSelectionChange={setSelectedTags}
-                placeholder="Select tags to filter..."
-                className="max-w-md"
-              />
             </div>
-          </div>
+          )}
 
           {/* Results Summary */}
           <ScrollAnimatedSection>
             <div className="mb-6">
               <p className="text-sm text-muted-foreground">
-                Showing {filteredPrompts.length} of {prompts.length} prompts
+                {showFavorites ? (
+                  <>
+                    Showing {filteredPrompts.length} favorite prompts
+                    <span className="ml-2 text-xs text-muted-foreground/70">
+                      ({JSON.parse(localStorage.getItem('favorites') || '[]').length} total favorites)
+                    </span>
+                  </>
+                ) : (
+                  `Showing ${filteredPrompts.length} of ${prompts.length} prompts`
+                )}
               </p>
+              {showFavorites && filteredPrompts.length === 0 && (
+                <div className="mt-4 p-6 text-center bg-muted/30 rounded-xl border border-border/30">
+                  <Heart className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
+                  <h3 className="text-lg font-medium text-muted-foreground mb-2">No favorites yet</h3>
+                  <p className="text-sm text-muted-foreground/70">
+                    Start adding prompts to your favorites by clicking the heart icon on any prompt card.
+                  </p>
+                </div>
+              )}
             </div>
           </ScrollAnimatedSection>
 

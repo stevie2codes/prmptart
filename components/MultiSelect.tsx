@@ -48,7 +48,7 @@ export function MultiSelect({
         <Button
           variant="outline"
           disabled
-          className="w-full justify-between h-12 border-orange-200/50 dark:border-orange-700/50 bg-white/80 dark:bg-gray-800/80 text-muted-foreground rounded-2xl opacity-50"
+          className="w-full justify-between h-12 border-orange-200/50 dark:border-orange-700/50 bg-gray-100/90 dark:bg-gray-800/80 text-muted-foreground rounded-2xl opacity-50"
         >
           <span>No options available</span>
           <ChevronDown className="h-4 w-4 text-orange-500" />
@@ -156,7 +156,7 @@ export function MultiSelect({
         ref={triggerRef}
         variant="outline"
         onClick={toggleDropdown}
-        className={`w-full justify-between h-12 border-orange-200/50 dark:border-orange-700/50 bg-white/80 dark:bg-gray-800/80 text-foreground placeholder-muted-foreground rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/60 backdrop-blur-sm transition-all duration-200 shadow-lg shadow-orange-500/10 ${
+        className={`w-full justify-between h-12 border-orange-200/50 dark:border-orange-700/50 bg-gray-100/90 dark:bg-gray-800/80 text-foreground placeholder-muted-foreground rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/60 backdrop-blur-sm transition-all duration-200 shadow-lg shadow-orange-500/10 ${
           isOpen ? 'ring-2 ring-orange-500/30 border-orange-500/60' : ''
         }`}
       >
