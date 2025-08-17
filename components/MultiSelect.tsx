@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, ChevronDown, Search, X } from 'lucide-react';
 import { Button } from './ui/button';
@@ -41,9 +41,38 @@ export function MultiSelect({
     option.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Early return if no options
+  if (options.length === 0) {
+    return (
+      <div className={`relative ${className}`}>
+        <Button
+          variant="outline"
+          disabled
+          className="w-full justify-between h-12 border-orange-200/50 dark:border-orange-700/50 bg-white/80 dark:bg-gray-800/80 text-muted-foreground rounded-2xl opacity-50"
+        >
+          <span>No options available</span>
+          <ChevronDown className="h-4 w-4 text-orange-500" />
+        </Button>
+      </div>
+    );
+  }
+
+  const handleOptionToggle = useCallback((value: string) => {
+    playSound('FILTER_SELECT');
+    const newSelection = selectedValues.includes(value)
+      ? selectedValues.filter(v => v !== value)
+      : [...selectedValues, value];
+    onSelectionChange(newSelection);
+  }, [selectedValues, onSelectionChange, playSound]);
+
+  const handleClearAll = useCallback(() => {
+    playSound('BUTTON_PRESS');
+    onSelectionChange([]);
+  }, [onSelectionChange, playSound]);
+
   // Calculate dropdown position to ensure it's always visible
   useEffect(() => {
-    if (isOpen && triggerRef.current && dropdownRef.current) {
+    if (isOpen && triggerRef.current) {
       const triggerRect = triggerRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
       const dropdownHeight = 320; // Approximate height of dropdown
@@ -93,12 +122,12 @@ export function MultiSelect({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, focusedIndex, filteredOptions]);
+  }, [isOpen, focusedIndex, filteredOptions, handleOptionToggle]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (isOpen && dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
         setFocusedIndex(-1);
         setSearchQuery('');
@@ -107,20 +136,7 @@ export function MultiSelect({
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const handleOptionToggle = (value: string) => {
-    playSound('FILTER_SELECT');
-    const newSelection = selectedValues.includes(value)
-      ? selectedValues.filter(v => v !== value)
-      : [...selectedValues, value];
-    onSelectionChange(newSelection);
-  };
-
-  const handleClearAll = () => {
-    playSound('BUTTON_PRESS');
-    onSelectionChange([]);
-  };
+  }, [isOpen]);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -134,7 +150,7 @@ export function MultiSelect({
   const selectedOptions = options.filter(option => selectedValues.includes(option.value));
 
   return (
-    <div className={`relative ${className}`} ref={dropdownRef}>
+    <div className={`relative ${className}`}>
       {/* Trigger Button */}
       <Button
         ref={triggerRef}
@@ -170,11 +186,12 @@ export function MultiSelect({
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            ref={dropdownRef}
             initial={{ opacity: 0, y: dropdownPosition === 'below' ? -10 : 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: dropdownPosition === 'below' ? -10 : 10, scale: 0.95 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className={`absolute z-10 w-full bg-background border border-orange-200/50 dark:border-orange-700/50 rounded-2xl shadow-lg  max-h-80 ${
+            className={`absolute z-50 w-full bg-background border border-orange-200/50 dark:border-orange-700/50 rounded-2xl shadow-lg max-h-80 ${
               dropdownPosition === 'below' 
                 ? 'top-full mt-2' 
                 : 'bottom-full mb-2'

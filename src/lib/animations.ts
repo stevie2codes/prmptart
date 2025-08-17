@@ -115,31 +115,15 @@ export const animations = {
 
   // Hover animations
   hover: {
-    lift: {
-      scale: 1.02,
-      y: -2,
-      transition: { duration: 0.2 },
-    },
-    scale: {
-      scale: 1.05,
-      transition: { duration: 0.15 },
-    },
-    glow: {
-      boxShadow: "0 0 20px rgba(59, 130, 246, 0.3)",
-      transition: { duration: 0.2 },
-    },
+    scale: { scale: 1.02 },
+    lift: { y: -2, scale: 1.01 },
+    glow: { boxShadow: "0 0 20px rgba(0, 0, 0, 0.1)" },
   },
 
   // Tap animations
   tap: {
-    scale: {
-      scale: 0.98,
-      transition: { duration: 0.1 },
-    },
-    press: {
-      scale: 0.95,
-      transition: { duration: 0.1 },
-    },
+    press: { scale: 0.98 },
+    bounce: { scale: 0.95 },
   },
 
   // Stagger animations for lists
@@ -268,9 +252,9 @@ export const animationUtils = {
   }),
 
   // Create tween animation with custom easing
-  createTween: (duration: number = 0.25, ease: number[] = [0.25, 0.46, 0.45, 0.94] as const): Transition => ({
+  createTween: (duration: number = 0.25, ease: number[] = [0.25, 0.46, 0.45, 0.94]): Transition => ({
     type: "tween",
     duration,
-    ease,
+    ease: ease as [number, number, number, number],
   }),
 };
