@@ -60,7 +60,7 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
 
   return (
     <motion.div
-      className="prompt-card-container bg-card/50 backdrop-blur-sm border border-border/50 rounded-3xl p-6 shadow-lg shadow-black/5 dark:shadow-black/20 hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30 transition-all duration-300 cursor-pointer group"
+      className="prompt-card-container bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-6 shadow-lg shadow-black/5 dark:shadow-black/20 hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30 transition-all duration-300 cursor-pointer group"
       onClick={handleCardClick}
       whileHover={animations.hover.lift}
       whileTap={animations.tap.scale}

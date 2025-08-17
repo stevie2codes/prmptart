@@ -4,7 +4,7 @@ import { ScrollAnimatedCard } from "./components/ScrollAnimatedCard";
 import { ScrollAnimatedSection } from "./components/ScrollAnimatedSection";
 import { TopBar } from "./components/TopBar";
 import { NavigationSidebar } from "./components/NavigationSidebar";
-import { FilterChips } from "./components/FilterChips";
+import { MultiSelect } from "./components/MultiSelect";
 import { CreatePromptModal } from "./components/CreatePromptModal";
 import { SidePanel } from "./components/SidePanel";
 import { mockPrompts, Prompt } from "./data/prompts";
@@ -57,18 +57,6 @@ function AppContent() {
       description: "Your new prompt has been added to the library.",
       duration: 4000,
     });
-  };
-
-  const handleTagToggle = (tag: string) => {
-    setSelectedTags(prev => 
-      prev.includes(tag) 
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
-    );
-  };
-
-  const handleClearTags = () => {
-    setSelectedTags([]);
   };
 
   const handlePhaseSelect = (phase: string) => {
@@ -138,19 +126,65 @@ function AppContent() {
 
         {/* Main Content Area */}
         <main className="pt-20 px-4 sm:px-6 pb-6 min-h-screen">
-          {/* Search and Filters */}
+          {/* Page Header */}
           <ScrollAnimatedSection>
-            <div className="space-y-6 mb-8">
-              {/* Filter Chips */}
-              <div>
-                <FilterChips
-                  selectedTags={selectedTags}
-                  onTagToggle={handleTagToggle}
-                  onClearTags={handleClearTags}
-                />
-              </div>
+            <div className="mb-8">
+              <motion.h1 
+                className="text-4xl font-bold text-foreground mb-2"
+                variants={variants.slideIn}
+                initial="hidden"
+                animate="visible"
+                transition={{ delay: 0.1 }}
+                style={{ willChange: "transform" }}
+              >
+                Prompt Library
+              </motion.h1>
+              <motion.p 
+                className="text-lg text-muted-foreground"
+                variants={variants.slideIn}
+                initial="hidden"
+                animate="visible"
+                transition={{ delay: 0.2 }}
+                style={{ willChange: "transform" }}
+              >
+                Discover and organize your AI prompts for better workflows
+              </motion.p>
             </div>
           </ScrollAnimatedSection>
+
+          {/* Search and Filters */}
+          <div className="space-y-6 mb-8">
+            {/* Tag Filter */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-medium text-foreground">Filter by Tags</h3>
+                <span className="text-xs text-muted-foreground">
+                  ({mockPrompts.flatMap(prompt => prompt.tags).filter((tag, index, self) => self.indexOf(tag) === index).length} available)
+                </span>
+              </div>
+              <MultiSelect
+                options={(() => {
+                  const allTags = mockPrompts.flatMap(prompt => prompt.tags);
+                  const tagCounts = allTags.reduce((acc, tag) => {
+                    acc[tag] = (acc[tag] || 0) + 1;
+                    return acc;
+                  }, {} as Record<string, number>);
+                  
+                  return Object.entries(tagCounts)
+                    .sort(([, a], [, b]) => b - a)
+                    .map(([tag, count]) => ({
+                      value: tag,
+                      label: tag,
+                      count
+                    }));
+                })()}
+                selectedValues={selectedTags}
+                onSelectionChange={setSelectedTags}
+                placeholder="Select tags to filter..."
+                className="max-w-md"
+              />
+            </div>
+          </div>
 
           {/* Results Summary */}
           <ScrollAnimatedSection>

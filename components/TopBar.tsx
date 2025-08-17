@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
+import { Plus } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { SearchBar } from "./SearchBar";
 import { SoundControl } from "./SoundControl";
-import { CreatePromptButton } from "./CreatePromptButton";
+import { Button } from "./ui/button";
+import { useSound } from "../src/contexts/SoundContext";
 
 interface TopBarProps {
   isSidebarCollapsed: boolean;
@@ -12,6 +14,13 @@ interface TopBarProps {
 }
 
 export function TopBar({ isSidebarCollapsed, onCreatePrompt, searchQuery, onSearchChange }: TopBarProps) {
+  const { playSound } = useSound();
+
+  const handleCreatePrompt = () => {
+    playSound('BUTTON_PRESS');
+    onCreatePrompt();
+  };
+
   return (
     <header
       className="fixed top-0 z-20 bg-background/80 dark:bg-background/60 backdrop-blur-xl border-b border-border/30 shadow-sm transition-all duration-300 ease-in-out"
@@ -24,7 +33,7 @@ export function TopBar({ isSidebarCollapsed, onCreatePrompt, searchQuery, onSear
     >
       <div className="flex items-center justify-between h-full px-6">
         {/* Left side - App title/branding */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3 flex-shrink-0">
           {/* Pop-Tart Logo */}
           <motion.div
             className="w-16 h-16"
@@ -68,10 +77,16 @@ export function TopBar({ isSidebarCollapsed, onCreatePrompt, searchQuery, onSear
         </div>
 
         {/* Right side controls */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4 flex-shrink-0">
           <SoundControl />
           <ThemeToggle />
-          <CreatePromptButton onClick={onCreatePrompt} isMenuOpen={false} />
+          <Button 
+            onClick={handleCreatePrompt} 
+            className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 hover:from-orange-600 hover:via-pink-600 hover:to-purple-700 text-white border-0 shadow-md hover:shadow-lg transition-all duration-300 px-4 py-2 h-10"
+          >
+            <Plus className="h-4 w-4" />
+            <span className="font-medium">New Prompt</span>
+          </Button>
         </div>
       </div>
     </header>

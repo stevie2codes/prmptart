@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, Palette, Users, Code, Plus } from "lucide-react";
+import { ChevronLeft, Palette, Users, Code, Plus, X, ChevronDown } from "lucide-react";
 import { Button } from "./ui/button";
 import { useSound } from "../src/contexts/SoundContext";
 
@@ -164,11 +164,7 @@ export function NavigationSidebar({
                 <div key={category.id} className="space-y-1">
                   <motion.button
                     onClick={() => handleCategorySelect(category.id)}
-                    className={`w-full text-left p-3 rounded-xl transition-all duration-200 font-medium text-sm border ${
-                      isSelected 
-                        ? `border ${getCategoryColorClasses(category.color, true)}`
-                        : `border-transparent text-sidebar-foreground/70 ${getCategoryColorClasses(category.color, false)}`
-                    }`}
+                    className={`w-full text-left p-3 rounded-xl transition-all duration-200 font-medium text-sm border border-transparent text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     layout
@@ -185,13 +181,13 @@ export function NavigationSidebar({
                             className="flex items-center justify-between flex-1"
                           >
                             <span>{category.label}</span>
-                            {hasPhases && isSelected && selectedPhase && (
+                            {hasPhases && (
                               <motion.div
-                                className="w-2 h-2 rounded-full bg-current"
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
+                                animate={{ rotate: isSelected ? 180 : 0 }}
                                 transition={{ duration: 0.2 }}
-                              />
+                              >
+                                <ChevronDown className="h-4 w-4 text-sidebar-foreground/50" />
+                              </motion.div>
                             )}
                           </motion.div>
                         )}
@@ -238,7 +234,7 @@ export function NavigationSidebar({
                         {/* Clear Selection Option */}
                         {selectedPhase && (
                           <motion.button
-                            onClick={() => onPhaseSelect('')}
+                            onClick={() => onPhaseSelect(selectedPhase)}
                             className="w-full text-left px-3 py-2 rounded-lg transition-all duration-200 font-medium text-xs border border-transparent text-sidebar-foreground/50 hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground mt-2 border-t border-sidebar-border/20 pt-3"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -247,8 +243,8 @@ export function NavigationSidebar({
                             whileTap={{ scale: 0.98 }}
                           >
                             <div className="flex items-center gap-2">
-                              <div className="w-1 h-1 rounded-full bg-sidebar-foreground/30"></div>
-                              <span>All Prompts</span>
+                              <X className="h-3 w-3" />
+                              <span>Clear Phase</span>
                             </div>
                           </motion.button>
                         )}

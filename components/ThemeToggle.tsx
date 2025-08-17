@@ -1,8 +1,8 @@
 import { Moon, Sun, Monitor, ChevronDown } from "lucide-react";
-import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { useSound } from "../src/contexts/SoundContext";
+import { useTheme } from "./ThemeProvider";
 
 interface ThemeToggleProps {
   isCollapsed?: boolean;
@@ -13,9 +13,9 @@ export function ThemeToggle({ isCollapsed = false }: ThemeToggleProps) {
   const { playSound } = useSound();
 
   const themes = [
-    { id: 'light', label: 'Light', icon: Sun, description: 'Clean and bright' },
-    { id: 'dark', label: 'Dark', icon: Moon, description: 'Easy on the eyes' },
-    { id: 'system', label: 'System', icon: Monitor, description: 'Follows your OS' }
+    { id: 'light' as const, label: 'Light', icon: Sun, description: 'Clean and bright' },
+    { id: 'dark' as const, label: 'Dark', icon: Moon, description: 'Easy on the eyes' },
+    { id: 'system' as const, label: 'System', icon: Monitor, description: 'Follows your OS' }
   ];
 
   const currentTheme = themes.find(t => t.id === theme) || themes[2];
