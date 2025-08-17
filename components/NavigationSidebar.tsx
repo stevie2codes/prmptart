@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, Palette, Users, Code, Plus, X, ChevronDown, Heart, Search } from "lucide-react";
-import { Button } from "./ui/button";
+
 import { useSound } from "../src/contexts/SoundContext";
 import { SearchBar } from "./SearchBar";
 import { useRef, useEffect } from "react";
@@ -84,7 +84,7 @@ export function NavigationSidebar({
     }
   ];
 
-  const currentCategory = categories.find(cat => cat.id === selectedCategory);
+
 
   const getPhaseColorClasses = (color: 'blue' | 'purple' | 'green' | 'orange' | 'pink' | 'cyan', isSelected: boolean) => {
     const colors = {
@@ -110,20 +110,7 @@ export function NavigationSidebar({
     return colors[color] || 'hover:bg-muted/50';
   };
 
-  const getCategoryColorClasses = (color: 'blue' | 'purple' | 'green', isSelected: boolean) => {
-    const colors = {
-      blue: isSelected 
-        ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700' 
-        : 'hover:bg-blue-50/50 dark:hover:bg-blue-900/10 hover:text-blue-700 dark:hover:text-blue-300',
-      purple: isSelected 
-        ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700' 
-        : 'hover:bg-purple-50/50 dark:hover:bg-purple-900/10 hover:text-purple-700 dark:hover:text-purple-300',
-      green: isSelected 
-        ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700' 
-        : 'hover:bg-green-50/50 dark:hover:bg-green-900/10 hover:text-green-700 dark:hover:text-green-300',
-    };
-    return colors[color] || 'hover:bg-muted/50';
-  };
+
 
   return (
     <motion.aside

@@ -245,7 +245,7 @@ export function SidePanel({ prompt, isOpen, onClose }: SidePanelProps) {
                   transition={{ delay: 0.1 }}
                   style={{ willChange: performance.willChange.transform }}
                 >
-                  {prompt.tags.map((tag, index) => (
+                  {prompt.tags.map((tag) => (
                     <motion.div
                       key={tag}
                       variants={variants.listItem}

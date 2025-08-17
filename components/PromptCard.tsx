@@ -56,18 +56,7 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
     setIsFavorited(!isFavorited);
   };
 
-  const getImpactIcon = () => {
-    switch (prompt.impact) {
-      case "High Impact":
-        return "🔥";
-      case "Quick Win":
-        return "⚡";
-      case "5-min Setup":
-        return "⏱";
-      default:
-        return "💡";
-    }
-  };
+
 
   const getPhaseColor = () => {
     const colors = {
@@ -86,7 +75,7 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
       className="prompt-card-container bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-6 shadow-lg shadow-black/5 dark:shadow-black/20 hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30 transition-all duration-300 cursor-pointer group"
       onClick={handleCardClick}
       whileHover={animations.hover.lift}
-      whileTap={animations.tap.scale}
+      whileTap={animations.tap.press}
       layout
       style={{ willChange: performance.willChange.layout }}
     >

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Plus, Trash2 } from "lucide-react";
+import { X, Plus } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -93,18 +93,7 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
     }));
   };
 
-  const getImpactBadgeColor = (impact: string) => {
-    switch (impact) {
-      case "High Impact":
-        return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300";
-      case "Quick Win":
-        return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300";
-      case "5-min Setup":
-        return "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300";
-      default:
-        return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300";
-    }
-  };
+
 
   return (
     <AnimatePresence mode="wait">
@@ -346,7 +335,7 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
                         animate="visible"
                         style={{ willChange: performance.willChange.layout }}
                       >
-                        {formData.tags.map((tag, index) => (
+                        {formData.tags.map((tag) => (
                           <motion.div
                             key={tag}
                             variants={variants.listItem}
