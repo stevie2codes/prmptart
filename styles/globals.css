@@ -1,14 +1,42 @@
+@import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Syne font for headings */
+.font-syne {
+  font-family: "Syne", sans-serif;
+}
+
+/* Space Grotesk font for body text */
+.font-space-grotesk {
+  font-family: "Space Grotesk", sans-serif;
+}
+
+/* Ensure all text elements inherit the Space Grotesk font */
+p,
+span,
+div,
+button,
+input,
+textarea,
+select,
+label,
+a {
+  font-family: inherit;
+}
+
 /* Performance optimizations for smooth scrolling */
 html {
+  font-family: "Space Grotesk", sans-serif;
   scroll-behavior: smooth;
   overscroll-behavior: contain;
 }
 
 body {
+  font-family: "Space Grotesk", sans-serif;
   overscroll-behavior: contain;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

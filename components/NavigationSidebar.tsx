@@ -14,6 +14,9 @@ interface NavigationSidebarProps {
   onCategorySelect: (category: 'design' | 'pm' | 'engineering') => void;
   showFavorites: boolean;
   onFavoritesToggle: () => void;
+  showMyPrompts: boolean;
+  onMyPromptsToggle: () => void;
+  prompts: any[];
   searchQuery: string;
   onSearchChange: (query: string) => void;
 }
@@ -27,6 +30,9 @@ export function NavigationSidebar({
   onCategorySelect,
   showFavorites,
   onFavoritesToggle,
+  showMyPrompts,
+  onMyPromptsToggle,
+  prompts,
   searchQuery,
   onSearchChange
 }: NavigationSidebarProps) {
@@ -140,9 +146,8 @@ export function NavigationSidebar({
             <AnimatePresence mode="wait">
               {!isCollapsed && (
                 <h1 
-                className="text-2xl font-bold bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 bg-clip-text text-transparent flex-shrink-0"
+                className="text-2xl font-bold bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 bg-clip-text text-transparent flex-shrink-0 font-syne"
                 style={{ 
-                  fontFamily: '"Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
                   textShadow: '0 2px 4px rgba(0,0,0,0.1)'
                 }}
               >
@@ -375,7 +380,7 @@ export function NavigationSidebar({
                   transition={{ duration: 0.2 }}
                   className="mb-2"
                 >
-                  <span className="text-xs font-medium text-sidebar-foreground/50 uppercase tracking-wider">
+                  <span className="text-xs font-medium text-sidebar-foreground/50 uppercase tracking-wider font-syne">
                     Personal
                   </span>
                 </motion.div>
@@ -404,7 +409,7 @@ export function NavigationSidebar({
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -10 }}
                       transition={{ duration: 0.2 }}
-                      className="flex items-center justify-between flex-1"
+                      className="flex items-center gap-2"
                     >
                       <div className="flex items-center gap-2">
                         <span>Favorites</span>
@@ -421,12 +426,55 @@ export function NavigationSidebar({
                           }
                         })()}
                       </div>
-                      <motion.div
-                        animate={{ rotate: showFavorites ? 180 : 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <ChevronDown className="h-4 w-4 text-sidebar-foreground/50" />
-                      </motion.div>
+
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.button>
+
+            {/* My Prompts Button */}
+            <motion.button
+              onClick={() => {
+                if (isCollapsed) {
+                  onToggle(); // Expand sidebar first
+                }
+                onMyPromptsToggle();
+              }}
+              className={`w-full text-left p-3 rounded-xl transition-all duration-200 font-medium text-sm border border-transparent text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground ${
+                showMyPrompts ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700' : ''
+              }`}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              layout
+            >
+              <div className="flex items-center gap-3">
+                <Plus className={`h-4 w-4 ${isCollapsed ? 'mx-auto' : ''}`} />
+                <AnimatePresence mode="wait">
+                  {!isCollapsed && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex items-center gap-2"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span>My Prompts</span>
+                        {(() => {
+                          try {
+                            const myPrompts = prompts.filter(prompt => (prompt as any).isUserCreated);
+                            return myPrompts.length > 0 ? (
+                              <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-medium bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 rounded-full">
+                                {myPrompts.length}
+                              </span>
+                            ) : null;
+                          } catch {
+                            return null;
+                          }
+                        })()}
+                      </div>
+
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -446,7 +494,7 @@ export function NavigationSidebar({
               transition={{ duration: 0.2 }}
             >
               <div className="text-xs text-sidebar-foreground/50 space-y-1">
-                <p>RTCCF-compliant prompts</p>
+                <p>Copyright prmptart 2025.</p>
                 <p>Version 1.0</p>
               </div>
             </motion.div>

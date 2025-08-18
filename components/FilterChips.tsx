@@ -1,3 +1,4 @@
+import React from "react";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { X, Filter, Tag } from "lucide-react";
@@ -112,7 +113,7 @@ export function FilterChips({ selectedTags, onTagToggle, onClearTags }: FilterCh
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <Tag className="h-4 w-4 text-muted-foreground" />
-          <h3 className="text-sm font-medium text-foreground">Popular Tags</h3>
+                                                     <h3 className="text-sm font-medium text-foreground font-syne">Popular Tags</h3>
           <span className="text-xs text-muted-foreground">({tagCategories['Popular'].length})</span>
         </div>
         
@@ -147,7 +148,7 @@ export function FilterChips({ selectedTags, onTagToggle, onClearTags }: FilterCh
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <Tag className="h-4 w-4 text-muted-foreground" />
-            <h3 className="text-sm font-medium text-foreground">All Tags</h3>
+                                                         <h3 className="text-sm font-medium text-foreground font-syne">All Tags</h3>
             <span className="text-xs text-muted-foreground">({tagCategories['All Tags'].length})</span>
           </div>
           

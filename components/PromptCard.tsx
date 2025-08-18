@@ -111,7 +111,7 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
       {/* Content */}
       <div className="space-y-4 mb-6">
         <motion.h3 
-          className="text-lg font-medium text-foreground group-hover:text-foreground/90 transition-colors duration-300"
+          className="text-lg font-medium text-foreground group-hover:text-foreground/90 transition-colors duration-300 font-syne"
           layout
         >
           {prompt.title}

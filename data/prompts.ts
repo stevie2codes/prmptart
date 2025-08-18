@@ -8,6 +8,7 @@ export interface Prompt {
   exampleOutput?: string;
   tags: string[];
   category: 'design' | 'research' | 'content' | 'development';
+  isUserCreated?: boolean;
 }
 
 // Helper function to create RTCCF content from individual components

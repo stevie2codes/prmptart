@@ -122,7 +122,7 @@ export function SidePanel({ prompt, isOpen, onClose }: SidePanelProps) {
             style={{ willChange: performance.willChange.transform }}
           >
             <motion.h2 
-              className="text-xl font-semibold text-foreground"
+              className="text-xl font-semibold text-foreground font-syne"
               variants={variants.fadeIn}
               initial="hidden"
               animate="visible"
@@ -138,7 +138,7 @@ export function SidePanel({ prompt, isOpen, onClose }: SidePanelProps) {
               whileTap={animations.tap.press}
               style={{ willChange: performance.willChange.transform }}
             >
-              <X className="h-5 w-5 text-muted-foreground" />
+              <X className="h-5 w-5 text-foreground" />
             </motion.button>
           </motion.div>
 
@@ -153,7 +153,7 @@ export function SidePanel({ prompt, isOpen, onClose }: SidePanelProps) {
               style={{ willChange: performance.willChange.transform }}
             >
               <motion.h3 
-                className="text-lg font-semibold text-foreground mb-4"
+                className="text-lg font-semibold text-foreground mb-4 font-syne"
                 variants={variants.fadeIn}
                 initial="hidden"
                 animate="visible"
@@ -206,7 +206,7 @@ export function SidePanel({ prompt, isOpen, onClose }: SidePanelProps) {
               style={{ willChange: performance.willChange.transform }}
             >
               <motion.p 
-                className="text-sm text-muted-foreground leading-relaxed"
+                className="text-sm text-foreground leading-relaxed"
                 variants={variants.fadeIn}
                 initial="hidden"
                 animate="visible"
@@ -235,7 +235,7 @@ export function SidePanel({ prompt, isOpen, onClose }: SidePanelProps) {
                   style={{ willChange: performance.willChange.opacity }}
                 >
                   <Tag className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium text-foreground">Tags</span>
+                  <span className="text-sm font-medium text-foreground font-syne">Tags</span>
                 </motion.div>
                 <motion.div 
                   className="flex flex-wrap gap-2"
@@ -283,7 +283,7 @@ export function SidePanel({ prompt, isOpen, onClose }: SidePanelProps) {
                 style={{ willChange: performance.willChange.opacity }}
               >
                 <BookOpen className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium text-foreground">Prompt Content</span>
+                <span className="text-sm font-medium text-foreground font-syne">Prompt Content</span>
               </motion.div>
               <motion.div
                 className="bg-muted/30 rounded-lg p-4 border border-border/30"
@@ -343,7 +343,7 @@ export function SidePanel({ prompt, isOpen, onClose }: SidePanelProps) {
                     >
                       ✨
                     </motion.div>
-                    Example Output
+                    <span className="font-syne">Example Output</span>
                   </motion.h4>
                   <motion.div
                     className="bg-muted/30 rounded-lg p-4 border border-border/30"

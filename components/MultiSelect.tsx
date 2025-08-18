@@ -127,10 +127,17 @@ export function MultiSelect({
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (isOpen && dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-        setFocusedIndex(-1);
-        setSearchQuery('');
+      if (isOpen) {
+        const target = event.target as Node;
+        const isClickOnDropdown = dropdownRef.current?.contains(target);
+        const isClickOnTrigger = triggerRef.current?.contains(target);
+        
+        // Only close if clicking outside both dropdown and trigger
+        if (!isClickOnDropdown && !isClickOnTrigger) {
+          setIsOpen(false);
+          setFocusedIndex(-1);
+          setSearchQuery('');
+        }
       }
     };
 
@@ -139,8 +146,14 @@ export function MultiSelect({
   }, [isOpen]);
 
   const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-    if (!isOpen) {
+    if (isOpen) {
+      // If dropdown is open, close it
+      setIsOpen(false);
+      setFocusedIndex(-1);
+      setSearchQuery('');
+    } else {
+      // If dropdown is closed, open it
+      setIsOpen(true);
       setFocusedIndex(-1);
       setSearchQuery('');
       setTimeout(() => searchInputRef.current?.focus(), 100);
