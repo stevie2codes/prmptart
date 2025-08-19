@@ -25,7 +25,7 @@ function AppContent() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [prompts, setPrompts] = useState<Prompt[]>(mockPrompts);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<'design' | 'pm' | 'engineering' | null>('design');
+  const [selectedCategory, setSelectedCategory] = useState<'research' | 'ideation' | 'flows' | 'prototyping' | null>('research');
   const [showFavorites, setShowFavorites] = useState(false);
   const [showMyPrompts, setShowMyPrompts] = useState(false);
 
@@ -39,7 +39,10 @@ function AppContent() {
       
       const matchesCategory = selectedCategory === null || prompt.category === selectedCategory;
       
-      const matchesPhase = selectedPhase === null || prompt.phase === selectedPhase;
+      const matchesPhase =
+        selectedPhase === null ||
+        prompt.subcategory === selectedPhase ||
+        prompt.phase === selectedPhase;
       
       const matchesTags = selectedTags.length === 0 || 
         selectedTags.some(tag => (prompt.tags || []).includes(tag));
@@ -69,7 +72,6 @@ function AppContent() {
       const userPrompt = {
         ...newPrompt,
         isUserCreated: true,
-        impact: 'Quick Win', // Default impact level
         tags: [], // Empty tags array
       };
       
@@ -116,7 +118,7 @@ function AppContent() {
     setShowFavorites(false);
   };
 
-  const handleCategorySelect = (category: 'design' | 'pm' | 'engineering') => {
+  const handleCategorySelect = (category: 'research' | 'ideation' | 'flows' | 'prototyping') => {
     playSound('FILTER_SELECT');
     // If switching from favorites or my prompts, turn them off
     if (showFavorites) {
@@ -224,7 +226,7 @@ function AppContent() {
                   : showMyPrompts
                     ? 'My Prompts'
                     : selectedCategory 
-                      ? `${selectedCategory === 'design' ? 'Design' : selectedCategory === 'pm' ? 'PM' : 'Engineering'} Prompts`
+                      ? selectedCategory === 'research' ? 'Research Prompts' : selectedCategory === 'ideation' ? 'Ideation Prompts' : selectedCategory === 'flows' ? 'User Flows & IA Prompts' : 'Prototyping & Design Prompts'
                       : 'Prompt Library'
                 }
               </motion.h1>
@@ -241,7 +243,7 @@ function AppContent() {
                   : showMyPrompts
                     ? 'Prompts you\'ve created and customized 🎨'
                     : selectedCategory
-                      ? `Browse ${selectedCategory === 'design' ? 'design' : selectedCategory === 'pm' ? 'product management' : 'engineering'} prompts and workflows`
+                      ? selectedCategory === 'research' ? 'Browse research prompts and workflows' : selectedCategory === 'ideation' ? 'Explore ideation and concept development prompts' : selectedCategory === 'flows' ? 'Design user flows and information architecture' : 'Create wireframes and high fidelity designs'
                       : 'Discover and organize your AI prompts for better workflows'
                 }
               </motion.p>
@@ -256,12 +258,22 @@ function AppContent() {
                 <div className="flex items-center gap-2">
                   <h3 className="text-sm font-medium text-foreground font-syne">Filter by Tags</h3>
                   <span className="text-xs text-foreground">
-                    ({mockPrompts.flatMap(prompt => prompt.tags).filter((tag, index, self) => self.indexOf(tag) === index).length} available)
+                    ({(() => {
+                      const relevantPrompts = selectedPhase 
+                        ? mockPrompts.filter(prompt => prompt.subcategory === selectedPhase)
+                        : mockPrompts;
+                      return relevantPrompts.flatMap(prompt => prompt.tags).filter((tag, index, self) => self.indexOf(tag) === index).length;
+                    })()} available)
                   </span>
                 </div>
                 <MultiSelect
                   options={(() => {
-                    const allTags = mockPrompts.flatMap(prompt => prompt.tags);
+                    // Filter prompts by selected subcategory if one is selected
+                    const relevantPrompts = selectedPhase 
+                      ? mockPrompts.filter(prompt => prompt.subcategory === selectedPhase)
+                      : mockPrompts;
+                    
+                    const allTags = relevantPrompts.flatMap(prompt => prompt.tags);
                     const tagCounts = allTags.reduce((acc, tag) => {
                       acc[tag] = (acc[tag] || 0) + 1;
                       return acc;

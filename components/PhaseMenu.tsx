@@ -49,10 +49,7 @@ export function PhaseMenu({ selectedPhase, onPhaseSelect, onMenuStateChange }: P
       icon: Users,
       label: 'Stakeholder & PM'
     },
-    'Dev Handoff': {
-      icon: Code2,
-      label: 'Dev Handoff & QA'
-    }
+
   };
 
   const hasActiveSelection = selectedPhase !== null;

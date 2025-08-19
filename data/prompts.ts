@@ -1,13 +1,13 @@
 export interface Prompt {
   id: string;
   title: string;
-  phase: 'Research' | 'IA' | 'Ideation' | 'Prototyping' | 'Stakeholder' | 'Dev Handoff';
-  impact: 'High Impact' | 'Quick Win' | '5-min Setup';
+  phase: 'Research' | 'IA' | 'Ideation' | 'Prototyping' | 'Stakeholder' | 'Flows & IA';
+  subcategory?: 'discovery' | 'synthesis' | 'storytelling' | 'validation' | 'brainstorming' | 'opportunity-framing' | 'concept-development' | 'prioritization' | 'navigation-ia' | 'task-flows' | 'content-hierarchy' | 'wireframing' | 'high-fidelity-design' | 'design-crit';
   summary: string;
   content: string;
   exampleOutput?: string;
   tags: string[];
-  category: 'design' | 'research' | 'content' | 'development';
+  category: 'design' | 'research' | 'content' | 'development' | 'ideation' | 'flows' | 'prototyping';
   isUserCreated?: boolean;
 }
 
@@ -30,745 +30,758 @@ ${format}`;
 };
 
 export const mockPrompts: Prompt[] = [
-  // Research & Discovery
+  // Discovery
   {
-    id: '1',
-    title: 'Research Synthesis',
+    id: '207',
+    title: 'Generative Interview Script',
     phase: 'Research',
-    impact: 'High Impact',
-    summary: 'Cluster and synthesize raw user interview notes into patterns, insights, and HMWs.',
+    subcategory: 'discovery',
+    summary: 'Generate a script for conducting generative research interviews.',
     content: createRTCCFContent(
-      'You are a senior UX researcher with expertise in qualitative data analysis.',
-      'Cluster qualitative interview notes into patterns and surface actionable insights.',
-      'You have [X] user interview transcripts about [product/feature] that need analysis.',
-      'At least 3 patterns, each with 2+ verbatim quotes, link each to a How Might We statement.',
-      'Table with columns: Pattern, Insight, Evidence (quotes), HMW Statement.'
+      'You are a UX researcher.',
+      'Draft a generative research interview script.',
+      'You need to interview [persona] about their current workflow, challenges, and expectations with a SaaS application.',
+      'Ensure questions are open-ended, neutral in tone, and structured to avoid bias. Include warm-up, core exploration, and reflection questions.',
+      'Deliverables: Interview script with intro, 6–8 core questions, and wrap-up prompts.'
     ),
-    exampleOutput: '| Pattern | Insight | Evidence | HMW Statement |\n|---------|---------|----------|---------------|\n| Navigation Confusion | Users struggle with current menu structure | "I never know where to find settings" | How might we simplify navigation paths? |',
-    tags: ['Deep Dive', 'Persona-based'],
+    tags: ['Interview', 'Generative Research'],
     category: 'research'
   },
   {
-    id: '2',
-    title: 'Behavioral Trends',
-    phase: 'Research',
-    impact: 'High Impact',
-    summary: 'Identify behavioral trends, motivations, and blockers from survey and interview data.',
-    content: createRTCCFContent(
-      'You are a UX researcher specializing in behavioral analysis and user psychology.',
-      'Identify behavioral trends, motivations, and blockers that could inform MVP scope.',
-      'You have [survey data] and [interview transcripts] about [product/feature usage].',
-      'Focus on actionable insights that directly impact product decisions and feature prioritization.',
-      'Sections: Key Behaviors, Core Motivations, Major Blockers, MVP Implications.'
-    ),
-    tags: ['Persona-based', 'Deep Dive'],
-    category: 'research'
-  },
-  {
-    id: '3',
+    id: '208',
     title: 'Competitive Analysis',
     phase: 'Research',
-    impact: 'Quick Win',
-    summary: 'Analyze competitor flows to identify differentiators, parity features, and experience gaps.',
+    subcategory: 'discovery',
+    summary: 'Conduct a structured competitive analysis of similar products.',
     content: createRTCCFContent(
-      'You are a competitive intelligence researcher with deep UX analysis skills.',
-      'Identify differentiators, parity features, and potential experience gaps from competitor analysis.',
-      'You have [competitor screenshots] and [user flows] from [X competitors] in [product category].',
-      'Focus on actionable opportunities, avoid feature copying, consider user context differences.',
-      'Table with columns: Feature, Competitor Approach, Our Opportunity, Priority Level.'
+      'You are a product researcher.',
+      'Perform a competitive analysis of 3–5 comparable products.',
+      'You are studying SaaS products used by [persona] for data insights or reporting.',
+      'Focus on feature sets, usability strengths, compliance gaps, and differentiators relevant to enterprise/government use cases.',
+      'Deliverables: Competitive analysis matrix with product names, key features, strengths, weaknesses, and potential opportunities.'
     ),
-    tags: ['Competitive Analysis', 'Quick Win'],
+    tags: ['Competitive Analysis', 'Benchmarking'],
     category: 'research'
   },
   {
-    id: '4',
-    title: 'Research Questions',
+    id: '204',
+    title: 'Simulated Usability Interview',
     phase: 'Research',
-    impact: '5-min Setup',
-    summary: 'Convert business goals into user-centered research questions and testable assumptions.',
+    subcategory: 'discovery',
+    summary: 'Simulate workflows for generating reports.',
     content: createRTCCFContent(
-      'You are a UX researcher skilled at translating business objectives into research frameworks.',
-      'Translate high-level business goals into user-centered research questions and assumptions to validate.',
-      'You have [business goals] and [success metrics] for [product/feature] targeting [user segment].',
-      'Create testable hypotheses, prioritize by impact and feasibility, include success criteria.',
-      'Table with columns: Business Goal, Research Question, Hypothesis, Success Criteria, Method.'
+      'You are [persona].',
+      'Simulate the steps of creating a quarterly compliance report in a data portal.',
+      'You are role-playing as the participant while the moderator guides you.',
+      'Answer naturally with detail about frustrations, workarounds, and thought process.',
+      'Deliverables: Realistic transcript of a simulated usability test.'
     ),
-    tags: ['Quick Win'],
+    tags: ['Multi-Turn', 'Simulation'],
     category: 'research'
   },
   {
-    id: '5',
-    title: 'Analytics Deep Dive',
+    id: '212',
+    title: 'Stakeholder Interview Guide',
     phase: 'Research',
-    impact: 'High Impact',
-    summary: 'Analyze user behavior patterns from analytics data to identify opportunities and pain points.',
+    subcategory: 'discovery',
+    summary: 'Generate an interview guide for internal stakeholders or policy owners.',
     content: createRTCCFContent(
-      'You are a data analyst specializing in user behavior analytics and UX metrics.',
-      'Analyze user behavior patterns from analytics data to identify opportunities and pain points.',
-      'You have [analytics data] from [product/feature] including [metrics like page views, conversions, etc.].',
-      'Focus on actionable insights, avoid correlation vs causation errors, prioritize by business impact.',
-      'Sections: Key Patterns, Pain Points, Opportunities, Recommendations, Next Steps.'
+      'You are a UX researcher.',
+      'Draft an interview guide for stakeholders.',
+      'You need to interview internal [persona] (e.g., IT, policy owner, department lead) to understand constraints and goals.',
+      'Keep tone professional, focus on uncovering organizational priorities, compliance needs, and technical limitations.',
+      'Deliverables: Interview guide with 6–8 questions covering goals, success measures, and challenges.'
     ),
-    tags: ['Deep Dive', 'Data-driven'],
+    tags: ['Stakeholder Research', 'Interview'],
+    category: 'research'
+  },
+
+  // Synthesis
+  {
+    id: '201',
+    title: 'Surface User Frustrations',
+    phase: 'Research',
+    subcategory: 'synthesis',
+    summary: 'Identify recurring frustrations in workflows.',
+    content: createRTCCFContent(
+      'You are a UX researcher analyzing enterprise SaaS product feedback.',
+      'Identify three recurring user frustrations with exporting or sharing reports.',
+      'You have interview transcripts from [persona] working with reporting systems.',
+      'Focus on specific frustrations tied to workflow inefficiency or compliance issues.',
+      'Deliverables: Bullet points with frustration + supporting quote for each.'
+    ),
+    tags: ['One-Shot', 'Frustrations'],
     category: 'research'
   },
   {
-    id: '6',
+    id: '202',
+    title: 'Cluster Messy Notes',
+    phase: 'Research',
+    subcategory: 'synthesis',
+    summary: 'Turn messy research notes into clusters and themes.',
+    content: createRTCCFContent(
+      'You are a research synthesizer.',
+      'Cluster raw quotes into themes that highlight workflow pain points.',
+      'You have transcripts/notes from [persona] preparing mandated reports.',
+      'Focus on compliance risks and repeat inefficiencies; ignore unrelated details.',
+      'Deliverables: Clustered themes with one-sentence summaries of user behavior + tension.'
+    ),
+    tags: ['SGEP', 'Clustering'],
+    category: 'research'
+  },
+  {
+    id: '203',
+    title: 'From Patterns to Insights',
+    phase: 'Research',
+    subcategory: 'synthesis',
+    summary: 'Transform clustered research into actionable insights with step-by-step reasoning.',
+    content: createRTCCFContent(
+      'You are a design researcher.',
+      'Analyze user quotes to generate deeper insights.',
+      'You have a cluster of [persona] feedback about shaping datasets.',
+      'Think step by step: What are they trying to achieve? Why is the difficulty occurring? What implication does this have for compliance or accuracy?',
+      'Deliverables: Concise design-relevant insight statement.'
+    ),
+    tags: ['Chain-of-Thought', 'Insight'],
+    category: 'research'
+  },
+  {
+    id: '209',
     title: 'User Journey Mapping',
     phase: 'Research',
-    impact: 'High Impact',
-    summary: 'Create comprehensive user journey maps to identify touchpoints and improvement opportunities.',
+    subcategory: 'synthesis',
+    summary: 'Create a user journey map to highlight workflows, pain points, and opportunities.',
     content: createRTCCFContent(
-      'You are a UX strategist expert in journey mapping and service design.',
-      'Create comprehensive user journey maps to identify touchpoints and improvement opportunities.',
-      'You have [user research data] about [user segment] and their experience with [product/service].',
-      'Include emotional states, pain points, opportunities, and actionable insights for each touchpoint.',
-      'Journey map with phases: Awareness, Consideration, Decision, Usage, Support, Advocacy.'
+      'You are a UX researcher and strategist.',
+      'Create a user journey map for [persona].',
+      'You have research notes and quotes describing their workflow with a data/insight application.',
+      'Focus on capturing steps, goals, emotions, and friction points across the journey.',
+      'Deliverables: Journey map with phases, user actions, emotions, pain points, and opportunities for improvement.'
     ),
-    tags: ['Deep Dive', 'Visual Output'],
-    category: 'design'
-  },
-  {
-    id: '7',
-    title: 'Persona Development',
-    phase: 'Research',
-    impact: 'High Impact',
-    summary: 'Develop detailed user personas based on research data to guide design decisions.',
-    content: createRTCCFContent(
-      'You are a UX researcher specializing in persona development and user segmentation.',
-      'Develop detailed user personas based on research data to guide design decisions.',
-      'You have [user research data] including [interviews, surveys, analytics] about [target users].',
-      'Create actionable personas with clear goals, pain points, and behavioral patterns.',
-      'Persona template: Name, Photo, Demographics, Goals, Pain Points, Behaviors, Motivations, Tech Comfort.'
-    ),
-    tags: ['Persona-based', 'Deep Dive'],
+    tags: ['Journey Mapping', 'Experience Mapping'],
     category: 'research'
   },
   {
-    id: '8',
-    title: 'Accessibility Audit',
+    id: '213',
+    title: 'Thematic Trend Spotting',
     phase: 'Research',
-    impact: 'Quick Win',
-    summary: 'Conduct accessibility audits to identify and prioritize WCAG compliance issues.',
+    subcategory: 'synthesis',
+    summary: 'Identify cross-context themes from multiple sources of research data.',
     content: createRTCCFContent(
-      'You are an accessibility expert with deep knowledge of WCAG guidelines and inclusive design.',
-      'Conduct accessibility audits to identify and prioritize WCAG compliance issues.',
-      'You have [product/feature] that needs accessibility evaluation against [WCAG 2.1 AA standards].',
-      'Focus on high-impact issues, provide specific remediation steps, prioritize by user impact.',
-      'Table with columns: Issue, WCAG Criteria, Impact Level, Remediation Steps, Priority.'
+      'You are a research synthesizer.',
+      'Spot cross-cutting trends across different [persona] groups.',
+      'You have research notes from multiple jurisdictions or branches of government.',
+      'Focus on shared patterns, tensions, or opportunities that recur across contexts.',
+      'Deliverables: 3–5 high-level themes with supporting evidence from multiple contexts.'
     ),
-    tags: ['Accessible Design', 'Quick Win'],
-    category: 'design'
+    tags: ['Trend Analysis', 'Synthesis'],
+    category: 'research'
   },
+
+  // Storytelling
   {
-    id: '9',
-    title: 'Usability Testing',
+    id: '205',
+    title: 'Reframe into Design Opportunities',
     phase: 'Research',
-    impact: 'High Impact',
-    summary: 'Plan and conduct usability testing sessions to identify user experience issues.',
+    subcategory: 'storytelling',
+    summary: 'Turn insights into open-ended “How might we” opportunities.',
     content: createRTCCFContent(
-      'You are a UX researcher expert in usability testing and user experience evaluation.',
-      'Plan and conduct usability testing sessions to identify user experience issues.',
-      'You have [product/feature] that needs usability evaluation with [target user segment].',
-      'Create testable scenarios, recruit appropriate participants, and provide actionable insights.',
-      'Sections: Test Plan, Scenarios, Participant Criteria, Metrics, Analysis Framework.'
+      'You are a strategic design researcher.',
+      'Reframe insights into design opportunities.',
+      'You have the insight: “[persona] often duplicates reports manually because they don’t trust automated calculations.”',
+      'Ensure reframes focus on trust, transparency, and product outcomes like efficiency and compliance confidence.',
+      'Deliverables: Three “How might we” questions.'
     ),
-    tags: ['Deep Dive', 'Persona-based'],
+    tags: ['Opportunity Framing', 'How-Might-We'],
     category: 'research'
   },
   {
-    id: '10',
+    id: '206',
+    title: 'Audience-Specific Insight Storytelling',
+    phase: 'Research',
+    subcategory: 'storytelling',
+    summary: 'Tailor insights for executives and design teams.',
+    content: createRTCCFContent(
+      'You are a research storyteller.',
+      'Rewrite one insight into two tailored narratives.',
+      'You have an insight requiring stakeholder communication.',
+      'One version should be outcome-driven for executives (compliance, cost savings); the other should be behavioral and flow-specific for designers and devs.',
+      'Deliverables: Two rewritten insight summaries + one recommended design step per audience.'
+    ),
+    tags: ['Storytelling', 'Stakeholder Alignment'],
+    category: 'research'
+  },
+  {
+    id: '214',
+    title: 'Evidence Matrix Creation',
+    phase: 'Research',
+    subcategory: 'storytelling',
+    summary: 'Organize research evidence across qualitative and quantitative data sources.',
+    content: createRTCCFContent(
+      'You are a UX researcher.',
+      'Create an evidence matrix that combines qualitative and quantitative findings.',
+      'You have quotes, survey data, and behavioral logs about [persona] workflows.',
+      'Ensure each theme is supported by at least two forms of evidence.',
+      'Deliverables: Matrix table with rows as themes and columns for Quotes, Survey Data, and Behavioral Data.'
+    ),
+    tags: ['Evidence Matrix', 'Storytelling'],
+    category: 'research'
+  },
+
+  // Validation
+  {
+    id: '210',
+    title: 'Survey Generator',
+    phase: 'Research',
+    subcategory: 'validation',
+    summary: 'Generate a short survey to validate themes with a larger sample of users.',
+    content: createRTCCFContent(
+      'You are a UX researcher.',
+      'Draft a 5–7 question survey to validate themes discovered in qualitative research.',
+      'You are studying how [persona] interacts with a data/insight application.',
+      'Ensure questions are clear, unbiased, and mix multiple-choice with open-ended for richer data.',
+      'Deliverables: Survey with 5–7 questions, labeled by type (MCQ, scale, open text).'
+    ),
+    tags: ['Survey', 'Validation'],
+    category: 'research'
+  },
+  {
+    id: '211',
+    title: 'Persona Hypothesis Builder',
+    phase: 'Research',
+    subcategory: 'validation',
+    summary: 'Transform raw notes into draft personas for alignment.',
+    content: createRTCCFContent(
+      'You are a UX strategist.',
+      'Generate a proto-persona profile from research notes.',
+      'You have early data about [persona] including goals, frustrations, and workflows.',
+      'Keep the output lightweight for early-stage alignment, not final persona documentation.',
+      'Deliverables: Proto-persona with attributes: Goals, Needs, Behaviors, Pain Points, Tools Used.'
+    ),
+    tags: ['Persona', 'Hypothesis'],
+    category: 'research'
+  },
+
+  // Ideation Prompts
+  // Brainstorming
+  {
+    id: '303',
+    title: 'Concept Sketch Prompts',
+    phase: 'Ideation',
+    subcategory: 'brainstorming',
+    summary: 'Generate prompts for creating concept sketches and visual ideation.',
+    content: createRTCCFContent(
+      'You are a creative facilitator specializing in visual ideation and concept development.',
+      'Generate prompts for creating concept sketches and visual ideation.',
+      'You need to help [persona] create concept sketches for [product/feature] that needs visual ideation.',
+      'Focus on creative prompts that encourage visual thinking, rapid sketching, and concept exploration.',
+      'Deliverables: 5-7 concept sketch prompts with clear objectives and creative constraints.'
+    ),
+    tags: ['Brainstorming', 'Visual Ideation'],
+    category: 'ideation'
+  },
+
+  // Brainstorming - Crazy 8s Expansion
+  {
+    id: '305',
+    title: 'Crazy 8s Expansion',
+    phase: 'Ideation',
+    subcategory: 'brainstorming',
+    summary: 'Generate divergent solution sketches in a Crazy 8s format.',
+    content: createRTCCFContent(
+      'You are a product designer facilitating a workshop.',
+      'Expand one core idea into 8 variations.',
+      'You have an insight about [persona] and a design opportunity to explore.',
+      'Each idea should be distinct, time-boxed, and described concisely.',
+      'Deliverables: 8 idea variations with 1–2 sentence descriptions each.'
+    ),
+    tags: ['Brainstorming', 'Divergence'],
+    category: 'ideation'
+  },
+
+  // Brainstorming - Blue Sky Exploration
+  {
+    id: '306',
+    title: 'Blue Sky Exploration',
+    phase: 'Ideation',
+    subcategory: 'brainstorming',
+    summary: 'Encourage unconstrained idea generation beyond current limitations.',
+    content: createRTCCFContent(
+      'You are a design facilitator.',
+      'Generate 5–7 “blue sky” solutions that ignore today’s constraints.',
+      'You have a problem statement about [persona] experiencing friction in workflows.',
+      'Think beyond technical limits, compliance rules, or budget. Focus on pure possibilities.',
+      'Deliverables: List of 5–7 unconstrained ideas with imaginative framing.'
+    ),
+    tags: ['Brainstorming', 'Exploration'],
+    category: 'ideation'
+  },
+
+  // Opportunity Framing
+  {
+    id: '307',
+    title: 'How Might We Generator',
+    phase: 'Ideation',
+    subcategory: 'opportunity-framing',
+    summary: 'Transform insights into open-ended "How Might We" questions.',
+    content: createRTCCFContent(
+      'You are a design strategist.',
+      'Generate "How Might We" questions.',
+      'You have an insight from research about [persona] pain points or unmet needs.',
+      'Ensure each question is user-centered, open-ended, and aligned with product outcomes.',
+      'Deliverables: 3–5 "How Might We" questions phrased clearly for a workshop.'
+    ),
+    tags: ['Opportunity Framing', 'How-Might-We'],
+    category: 'ideation'
+  },
+  {
+    id: '308',
+    title: 'Constraint-Driven Ideation',
+    phase: 'Ideation',
+    subcategory: 'opportunity-framing',
+    summary: 'Reframe opportunities under intentional constraints.',
+    content: createRTCCFContent(
+      'You are a product strategist.',
+      'Generate solution ideas under specific constraints.',
+      'You have an insight about [persona] and a known problem area.',
+      'Apply a constraint like "half the resources," "mobile-only," or "1-day build."',
+      'Deliverables: 3–4 solution directions, each framed by how the constraint changes the idea.'
+    ),
+    tags: ['Opportunity Framing', 'Constraints'],
+    category: 'ideation'
+  },
+
+  // Concept Development
+  {
+    id: '309',
+    title: 'Concept Sketch Prompts',
+    phase: 'Ideation',
+    subcategory: 'concept-development',
+    summary: 'Generate divergent early concepts for a workflow or feature.',
+    content: createRTCCFContent(
+      'You are a product designer.',
+      'Suggest divergent concept directions for a new feature.',
+      'You have a workflow insight about [persona] and a prototype idea to explore.',
+      'Focus on breadth over depth; emphasize different angles of solving the same need.',
+      'Deliverables: 3–4 concept directions described in 2–3 sentences each, with pros/cons.'
+    ),
+    tags: ['Concept Development', 'Brainstorming'],
+    category: 'ideation'
+  },
+  {
+    id: '310',
+    title: 'Idea Remix Generator',
+    phase: 'Ideation',
+    subcategory: 'concept-development',
+    summary: 'Combine or remix existing ideas into hybrid concepts.',
+    content: createRTCCFContent(
+      'You are a design thinker.',
+      'Generate new ideas by remixing or combining two or more existing concepts.',
+      'You have a set of early concepts for [persona] workflows.',
+      'Ensure remixes are distinct from the originals and highlight added value.',
+      'Deliverables: 3–5 hybrid ideas with clear descriptions of how they combine existing elements.'
+    ),
+    tags: ['Concept Development', 'Remix'],
+    category: 'ideation'
+  },
+
+  // Prioritization
+  {
+    id: '311',
+    title: 'Impact/Effort Matrix',
+    phase: 'Ideation',
+    subcategory: 'prioritization',
+    summary: 'Prioritize concepts based on impact and effort.',
+    content: createRTCCFContent(
+      'You are a product strategist.',
+      'Organize ideas into an Impact vs Effort matrix.',
+      'You have a list of 5–10 potential solutions generated for [persona].',
+      'Classify ideas into four quadrants (Quick Wins, Major Projects, Fill-Ins, Time Wasters) and explain rationale.',
+      'Deliverables: A matrix with quadrants labeled and each idea placed, with 1–2 sentence rationale.'
+    ),
+    tags: ['Prioritization', 'Convergence'],
+    category: 'ideation'
+  },
+  {
+    id: '312',
+    title: 'Dot Voting Simulation',
+    phase: 'Ideation',
+    subcategory: 'prioritization',
+    summary: 'Simulate dot-voting to converge on top ideas.',
+    content: createRTCCFContent(
+      'You are a workshop facilitator.',
+      'Run a simulated dot-voting session.',
+      'You have a set of 6–8 ideas generated for [persona].',
+      'Assign a limited number of "votes" (e.g., 3 per participant) and show which ideas surface to the top.',
+      'Deliverables: Ranked list of ideas with vote counts and a short summary of why each idea resonated.'
+    ),
+    tags: ['Prioritization', 'Workshop'],
+    category: 'ideation'
+  },
+
+  // User Flows & Information Architecture Prompts
+  // Navigation & IA
+  {
+    id: '401',
     title: 'Information Architecture',
-    phase: 'IA',
-    impact: 'High Impact',
-    summary: 'Design intuitive information architecture and navigation structures for complex products.',
+    phase: 'Flows & IA',
+    subcategory: 'navigation-ia',
+    summary: 'Design a clear information architecture and navigation model.',
     content: createRTCCFContent(
-      'You are an information architect specializing in complex product structures and user navigation.',
-      'Design intuitive information architecture and navigation structures for complex products.',
-      'You have [product] with [X features/sections] that needs logical organization and navigation.',
-      'Focus on user mental models, minimize cognitive load, ensure findability and usability.',
-      'Deliverables: Site map, Navigation structure, Content hierarchy, User flow recommendations.'
+      'You are an information architect.',
+      'Propose a site/app IA with primary/secondary nav and labeled sections.',
+      'You have a complex product used by [persona] with multiple modules and reports.',
+      'Align to user mental models; minimize cognitive load; ensure findability and scalability.',
+      'Deliverables: IA outline, top-nav/side-nav proposal, section descriptions, and cross-links.'
     ),
-    tags: ['Deep Dive', 'Visual Output'],
-    category: 'design'
+    tags: ['IA', 'Navigation'],
+    category: 'flows'
   },
   {
-    id: '11',
-    title: 'Content Strategy',
-    phase: 'IA',
-    impact: 'High Impact',
-    summary: 'Develop content strategy and governance frameworks for consistent user experiences.',
+    id: '402',
+    title: 'Navigation Mapping',
+    phase: 'Flows & IA',
+    subcategory: 'navigation-ia',
+    summary: 'Map navigation routes between key areas and expected entry points.',
     content: createRTCCFContent(
-      'You are a content strategist expert in information architecture and content governance.',
-      'Develop content strategy and governance frameworks for consistent user experiences.',
-      'You have [product/website] that needs content organization and governance structure.',
-      'Create scalable frameworks, ensure consistency, define voice and tone guidelines.',
-      'Sections: Content Audit, Strategy Framework, Governance Model, Voice & Tone, Content Types.'
+      'You are a UX designer.',
+      'Create a navigation map showing primary routes and key entry points.',
+      'You have modules frequently accessed by [persona] (e.g., Datasets, Reports, Compliance, Admin).',
+      'Prioritize shortest viable paths; avoid dead ends; include breadcrumbs and back-path logic.',
+      'Deliverables: Navigation map with labeled routes, entry/exit points, and guardrails.'
     ),
-    tags: ['Deep Dive', 'Content-focused'],
-    category: 'content'
+    tags: ['Navigation', 'Wayfinding'],
+    category: 'flows'
   },
   {
-    id: '12',
-    title: 'Taxonomy Design',
-    phase: 'IA',
-    impact: 'Quick Win',
-    summary: 'Design classification systems and tagging structures for content organization.',
+    id: '403',
+    title: 'Wayfinding Scenarios',
+    phase: 'Flows & IA',
+    subcategory: 'navigation-ia',
+    summary: 'Stress-test wayfinding with realistic user goals.',
     content: createRTCCFContent(
-      'You are an information architect specializing in taxonomy design and content classification.',
-      'Design classification systems and tagging structures for content organization.',
-      'You have [content/products] that need logical classification and searchable organization.',
-      'Create intuitive categories, ensure scalability, consider user mental models.',
-      'Deliverables: Taxonomy structure, Tagging guidelines, Search optimization, Maintenance plan.'
+      'You are a UX researcher.',
+      'Define wayfinding scenarios and success paths.',
+      'You need to validate how [persona] finds a target (e.g., "Find last quarter\'s audit report").',
+      'Design scenarios that test labels, grouping, and recovery from wrong turns.',
+      'Deliverables: 3–4 wayfinding scenarios with starting point, intended route, detours, and success criteria.'
     ),
-    tags: ['Quick Win', 'Content-focused'],
-    category: 'content'
+    tags: ['Wayfinding', 'Validation'],
+    category: 'flows'
+  },
+
+  // Task Flows
+  {
+    id: '404',
+    title: 'Task Flow Generator',
+    phase: 'Flows & IA',
+    subcategory: 'task-flows',
+    summary: 'Draft a step-by-step task flow for a core job.',
+    content: createRTCCFContent(
+      'You are a product designer.',
+      'Generate a task flow for a critical job to be done.',
+      'You have a goal for [persona] (e.g., "Create and share a quarterly compliance report").',
+      'Capture system states, decisions, and handoffs; include preconditions/postconditions.',
+      'Deliverables: Linear task flow with steps, decision diamonds, and system/user actions.'
+    ),
+    tags: ['Task Flow', 'JTBD'],
+    category: 'flows'
   },
   {
-    id: '13',
-    title: 'Search Experience',
-    phase: 'IA',
-    impact: 'High Impact',
-    summary: 'Design intuitive search experiences with smart filtering and result ranking.',
+    id: '405',
+    title: 'Edge Case Flow Mapping',
+    phase: 'Flows & IA',
+    subcategory: 'task-flows',
+    summary: 'Map failure paths and exception handling around a task.',
     content: createRTCCFContent(
-      'You are a UX designer specializing in search experiences and information retrieval.',
-      'Design intuitive search experiences with smart filtering and result ranking.',
-      'You have [product] with [search functionality] that needs improved user experience.',
-      'Focus on query understanding, result relevance, filtering options, and search analytics.',
-      'Sections: Search Interface, Filtering Options, Result Ranking, Analytics, Optimization.'
+      'You are a UX systems thinker.',
+      'Extend a base task flow with edge cases and exceptions.',
+      'You have a core flow used by [persona]; identify points of failure (permissions, missing data, timeouts).',
+      'Ensure recoverability and clear messaging; propose guardrails and retries.',
+      'Deliverables: Extended flow with alternate paths, error states, and recovery steps.'
     ),
-    tags: ['Deep Dive', 'Visual Output'],
-    category: 'design'
+    tags: ['Edge Cases', 'Resilience'],
+    category: 'flows'
   },
   {
-    id: '14',
-    title: 'Navigation Design',
-    phase: 'IA',
-    impact: 'High Impact',
-    summary: 'Design intuitive navigation patterns that guide users through complex information.',
+    id: '406',
+    title: 'Alternate Pathways Exploration',
+    phase: 'Flows & IA',
+    subcategory: 'task-flows',
+    summary: 'Propose alternative routes to complete the same task.',
     content: createRTCCFContent(
-      'You are a UX designer expert in navigation design and user wayfinding.',
-      'Design intuitive navigation patterns that guide users through complex information.',
-      'You have [product] with [complex structure] that needs clear navigation patterns.',
-      'Focus on user mental models, minimize cognitive load, ensure consistency across platforms.',
-      'Deliverables: Navigation patterns, User flows, Consistency guidelines, Testing plan.'
+      'You are a UX strategist.',
+      'Design 2–3 alternate pathways for the same outcome.',
+      'You have a target outcome for [persona] (e.g., "Publish a dataset to a shared workspace").',
+      'Offer variations for novice vs. expert users; minimize redundant steps.',
+      'Deliverables: Comparative pathways with pros/cons and recommended default.'
     ),
-    tags: ['Deep Dive', 'Visual Output'],
-    category: 'design'
+    tags: ['Alternate Paths', 'Usability'],
+    category: 'flows'
   },
   {
-    id: '15',
-    title: 'Data Visualization',
-    phase: 'IA',
-    impact: 'Quick Win',
-    summary: 'Design effective data visualizations that communicate complex information clearly.',
+    id: '410',
+    title: 'User Flow Setup',
+    phase: 'Flows & IA',
+    subcategory: 'task-flows',
+    summary: 'Create a clear, step-by-step user flow for a specific task in your product.',
     content: createRTCCFContent(
-      'You are a data visualization expert specializing in UX and information design.',
-      'Design effective data visualizations that communicate complex information clearly.',
-      'You have [data] that needs to be visualized for [user segment] to understand [insights].',
-      'Choose appropriate chart types, ensure accessibility, focus on clarity over aesthetics.',
-      'Deliverables: Chart recommendations, Design guidelines, Accessibility checklist, Testing plan.'
+      'You are a UX designer specializing in mapping user flows for complex enterprise SaaS applications.',
+      'Design a clear user flow for a [persona] completing [specific task].',
+      'The product is a government SaaS application where users interact with data and insights. Focus on a specific scenario such as report creation, approvals, or data entry.',
+      'Ensure the flow minimizes friction, follows logical steps, and accounts for edge cases. Highlight where decision points or system feedback occur.',
+      'Deliverables: Visual or text-based flow with steps, decision branches, annotations for pain points or opportunities.'
     ),
-    tags: ['Quick Win', 'Visual Output'],
-    category: 'design'
+    tags: ['Flow Mapping', 'Process Design'],
+    category: 'flows'
+  },
+
+  // Content Hierarchy
+  {
+    id: '407',
+    title: 'Content Priority Mapping',
+    phase: 'Flows & IA',
+    subcategory: 'content-hierarchy',
+    summary: 'Define content hierarchy for a key page or template.',
+    content: createRTCCFContent(
+      'You are a content-first designer.',
+      'Prioritize content blocks and interactions.',
+      'You have a page used by [persona] (e.g., Report Detail, Dataset Overview).',
+      'Rank content by decision-making relevance; align labels to domain language.',
+      'Deliverables: Ordered content list with purpose, example microcopy, and interaction notes.'
+    ),
+    tags: ['Content Strategy', 'Hierarchy'],
+    category: 'flows'
   },
   {
-    id: '16',
-    title: 'Concept Sketches',
-    phase: 'Ideation',
-    impact: 'Quick Win',
-    summary: 'Create rapid concept sketches to explore different design directions.',
+    id: '408',
+    title: 'Hierarchy Audit',
+    phase: 'Flows & IA',
+    subcategory: 'content-hierarchy',
+    summary: 'Assess current pages for clarity and visual hierarchy.',
     content: createRTCCFContent(
-      'You are a UX designer expert in rapid concept exploration and visual ideation.',
-      'Create rapid concept sketches to explore different design directions.',
-      'You have [design challenge] that needs multiple concept directions explored quickly.',
-      'Focus on quantity over quality, explore diverse approaches, capture key ideas.',
-      'Deliverables: 5-10 concept sketches, Key differentiators, Evaluation criteria, Next steps.'
+      'You are a UX auditor.',
+      'Audit existing page layouts for hierarchy and scannability.',
+      'You have screenshots/links of pages used by [persona].',
+      'Identify clutter, competing headers, unclear grouping; propose quick-win fixes.',
+      'Deliverables: Audit findings with before/after hierarchy recommendations.'
     ),
-    tags: ['Quick Win', 'Visual Output'],
-    category: 'design'
+    tags: ['Audit', 'Heuristics'],
+    category: 'flows'
   },
   {
-    id: '17',
-    title: 'Interaction Models',
-    phase: 'Ideation',
-    impact: 'High Impact',
-    summary: 'Design interaction models that define how users will engage with your solution.',
+    id: '409',
+    title: 'Card Sorting Simulation',
+    phase: 'Flows & IA',
+    subcategory: 'content-hierarchy',
+    summary: 'Simulate an open/closed card sort to validate labeling and grouping.',
     content: createRTCCFContent(
-      'You are a UX designer specializing in interaction design and user engagement patterns.',
-      'Design interaction models that define how users will engage with your solution.',
-      'You have [design concept] that needs interaction patterns and user engagement models.',
-      'Focus on user goals, natural interactions, feedback loops, and engagement patterns.',
-      'Interaction model: User goals, Interaction patterns, Feedback mechanisms, Engagement loops, Success metrics.'
+      'You are a UX researcher.',
+      'Run a simulated card sort on key labels/categories.',
+      'You have a set of items [paste labels] to group for [persona].',
+      'Suggest likely groupings, label candidates, and ambiguous items to test with users.',
+      'Deliverables: Proposed groups, candidate labels, and a shortlist of items needing validation.'
     ),
-    tags: ['Deep Dive', 'Strategic'],
-    category: 'design'
+    tags: ['Card Sorting', 'Labeling'],
+    category: 'flows'
   },
+
+  // Prototyping & Design Prompts
+  // Wireframing
   {
-    id: '18',
-    title: 'Validation Concepts',
-    phase: 'Ideation',
-    impact: '5-min Setup',
-    summary: 'Create validation concepts to test assumptions and gather user feedback.',
-    content: createRTCCFContent(
-      'You are a UX researcher expert in assumption validation and concept testing.',
-      'Create validation concepts to test assumptions and gather user feedback.',
-      'You have [design assumptions] that need validation through [user feedback methods].',
-      'Focus on key assumptions, create testable concepts, plan for rapid feedback.',
-      'Validation plan: Key assumptions, Test concepts, Feedback methods, Success criteria, Timeline.'
-    ),
-    tags: ['Quick Win', 'Validation'],
-    category: 'research'
-  },
-  {
-    id: '19',
-    title: 'Failure Analysis',
-    phase: 'Ideation',
-    impact: 'Quick Win',
-    summary: 'Analyze potential failure points and create mitigation strategies.',
-    content: createRTCCFContent(
-      'You are a UX strategist expert in risk assessment and failure prevention.',
-      'Analyze potential failure points and create mitigation strategies.',
-      'You have [design solution] that needs failure analysis and risk mitigation.',
-      'Identify critical failure points, assess impact, create prevention strategies.',
-      'Failure analysis: Risk assessment, Failure scenarios, Impact analysis, Mitigation strategies, Monitoring plan.'
-    ),
-    tags: ['Quick Win', 'Strategic'],
-    category: 'design'
-  },
-  {
-    id: '20',
-    title: 'UI Metaphors',
-    phase: 'Ideation',
-    impact: '5-min Setup',
-    summary: 'Explore UI metaphors that make complex interactions intuitive.',
-    content: createRTCCFContent(
-      'You are a UX designer expert in intuitive interface design and metaphor usage.',
-      'Explore UI metaphors that make complex interactions intuitive.',
-      'You have [complex interaction] that needs intuitive metaphor-based design.',
-      'Find familiar real-world analogies, ensure cultural appropriateness, test for clarity.',
-      'Metaphor exploration: Real-world analogs, Cultural considerations, Clarity testing, Implementation plan.'
-    ),
-    tags: ['Quick Win', 'Visual Output'],
-    category: 'design'
-  },
-  {
-    id: '21',
-    title: 'Clickable Prototype',
+    id: '501',
+    title: 'Wireframe Layout Generator',
     phase: 'Prototyping',
-    impact: 'Quick Win',
-    summary: 'Create clickable prototypes for user testing and stakeholder feedback.',
+    subcategory: 'wireframing',
+    summary: 'Generate wireframe layouts for a key screen.',
     content: createRTCCFContent(
-      'You are a UX designer expert in rapid prototyping and user experience simulation.',
-      'Create clickable prototypes for user testing and stakeholder feedback.',
-      'You have [design concept] that needs interactive prototyping for [feedback objectives].',
-      'Focus on key interactions, realistic user flows, testable scenarios.',
-      'Prototype plan: Key interactions, User flows, Testing scenarios, Feedback collection, Iteration strategy.'
+      'You are a UX designer creating early wireframes.',
+      'Generate 2–3 wireframe layout options for a single screen.',
+      'You have a workflow where [persona] needs to complete [task] in a government SaaS app.',
+      'Focus on clarity, hierarchy, and logical grouping of actions and content. Do not add visual styling yet.',
+      'Deliverables: 2–3 wireframe layout options described with sections, placement, and interaction notes.'
     ),
-    tags: ['Quick Win', 'Visual Output'],
-    category: 'design'
+    tags: ['Wireframing', 'Layout'],
+    category: 'prototyping'
   },
   {
-    id: '22',
-    title: 'Test Hypotheses',
+    id: '502',
+    title: 'Screen Comparison Variants',
     phase: 'Prototyping',
-    impact: '5-min Setup',
-    summary: 'Design experiments to test design hypotheses and validate assumptions.',
+    subcategory: 'wireframing',
+    summary: 'Compare different wireframe approaches for the same task.',
     content: createRTCCFContent(
-      'You are a UX researcher expert in hypothesis testing and experimental design.',
-      'Design experiments to test design hypotheses and validate assumptions.',
-      'You have [design hypotheses] that need testing through [experimental methods].',
-      'Create testable hypotheses, design experiments, plan for data collection and analysis.',
-      'Experiment design: Hypotheses, Test methods, Data collection, Analysis plan, Success criteria.'
+      'You are a UX designer exploring alternatives.',
+      'Propose 2 different wireframe variants for the same task flow.',
+      'You have a screen where [persona] must complete [task].',
+      'Each variant should highlight different navigation or layout strategies.',
+      'Deliverables: Side-by-side descriptions of 2 wireframe options with pros/cons for each.'
     ),
-    tags: ['Quick Win', 'Validation'],
-    category: 'research'
+    tags: ['Wireframing', 'Variants'],
+    category: 'prototyping'
   },
   {
-    id: '23',
-    title: 'Usability Review',
+    id: '503',
+    title: 'Content-to-Wireframe Mapping',
     phase: 'Prototyping',
-    impact: 'Quick Win',
-    summary: 'Conduct usability reviews to identify potential issues before user testing.',
+    subcategory: 'wireframing',
+    summary: 'Turn content requirements into wireframe sections.',
     content: createRTCCFContent(
-      'You are a UX designer expert in usability evaluation and heuristic analysis.',
-      'Conduct usability reviews to identify potential issues before user testing.',
-      'You have [prototype] that needs usability review before [user testing].',
-      'Apply usability heuristics, identify potential issues, prioritize by impact.',
-      'Review framework: Heuristic evaluation, Issue identification, Priority assessment, Remediation plan.'
+      'You are a content-first UX designer.',
+      'Translate a list of content items into a wireframe structure.',
+      'You have content blocks (headings, tables, filters, charts) required for [persona].',
+      'Prioritize content based on importance to user decisions; map each block to wireframe placement.',
+      'Deliverables: Wireframe description with clear content hierarchy and rationale for ordering.'
     ),
-    tags: ['Quick Win', 'Evaluation'],
-    category: 'design'
+    tags: ['Wireframing', 'Content Strategy'],
+    category: 'prototyping'
   },
+
+  // High Fidelity Design
   {
-    id: '24',
-    title: 'Usability Test Script',
+    id: '504',
+    title: 'UI Exploration Prompts',
     phase: 'Prototyping',
-    impact: 'High Impact',
-    summary: 'Create comprehensive usability test scripts for systematic user evaluation.',
+    subcategory: 'high-fidelity-design',
+    summary: 'Explore high fidelity UI design directions.',
     content: createRTCCFContent(
-      'You are a UX researcher expert in usability testing and user evaluation.',
-      'Create comprehensive usability test scripts for systematic user evaluation.',
-      'You have [prototype] that needs usability testing with [target users].',
-      'Create realistic scenarios, clear instructions, measurable tasks, comprehensive data collection.',
-      'Test script: Introduction, Scenarios, Tasks, Data collection, Debrief questions, Success metrics.'
+      'You are a product designer exploring UI visual styles.',
+      'Generate 2–3 distinct high fidelity design directions for a single screen.',
+      'You have a wireframe for [persona] completing [task].',
+      'Each direction should use different color, typography, and layout emphasis but remain accessible and usable.',
+      'Deliverables: 2–3 styled UI mockup descriptions highlighting differences in visual system and tone.'
     ),
-    tags: ['Deep Dive', 'Validation'],
-    category: 'research'
+    tags: ['High Fidelity', 'UI Variants'],
+    category: 'prototyping'
   },
   {
-    id: '25',
-    title: 'Accessibility Improvements',
+    id: '505',
+    title: 'Design System Application',
     phase: 'Prototyping',
-    impact: 'Quick Win',
-    summary: 'Identify and implement accessibility improvements for inclusive design.',
+    subcategory: 'high-fidelity-design',
+    summary: 'Apply an existing design system to high fidelity prototypes.',
     content: createRTCCFContent(
-      'You are an accessibility expert specializing in inclusive design and WCAG compliance.',
-      'Identify and implement accessibility improvements for inclusive design.',
-      'You have [prototype] that needs accessibility evaluation and improvement.',
-      'Focus on high-impact accessibility issues, ensure WCAG compliance, prioritize by user impact.',
-      'Accessibility plan: Current state, Improvement areas, Implementation priority, Testing strategy, Compliance validation.'
+      'You are a product designer working within a design system.',
+      'Translate a wireframe into a high fidelity screen using defined components.',
+      'You have wireframes for [persona] workflows that need consistency with the design system.',
+      'Focus on applying the correct components, spacing, and styles from the system.',
+      'Deliverables: High fidelity mockup descriptions with design system components mapped to each section.'
     ),
-    tags: ['Accessible Design', 'Quick Win'],
-    category: 'design'
+    tags: ['High Fidelity', 'Design System'],
+    category: 'prototyping'
   },
   {
-    id: '26',
-    title: 'Stakeholder Summary',
-    phase: 'Stakeholder',
-    impact: 'High Impact',
-    summary: 'Create comprehensive stakeholder summaries for project alignment.',
-    content: createRTCCFContent(
-      'You are a UX strategist expert in stakeholder communication and project alignment.',
-      'Create comprehensive stakeholder summaries for project alignment.',
-      'You have [design project] that needs stakeholder summary and alignment.',
-      'Focus on business value, user impact, clear next steps, stakeholder concerns.',
-      'Summary structure: Project overview, Key decisions, User value, Business impact, Next steps, Stakeholder feedback.'
-    ),
-    tags: ['Deep Dive', 'Strategic'],
-    category: 'content'
-  },
-  {
-    id: '27',
-    title: 'KPI Alignment',
-    phase: 'Stakeholder',
-    impact: 'Quick Win',
-    summary: 'Align design decisions with business KPIs and success metrics.',
-    content: createRTCCFContent(
-      'You are a UX strategist expert in business alignment and KPI measurement.',
-      'Align design decisions with business KPIs and success metrics.',
-      'You have [design decisions] that need alignment with [business KPIs].',
-      'Map design outcomes to business metrics, ensure measurable impact, plan for success tracking.',
-      'KPI alignment: Business objectives, Design outcomes, Success metrics, Measurement plan, Reporting framework.'
-    ),
-    tags: ['Quick Win', 'Strategic'],
-    category: 'content'
-  },
-  {
-    id: '28',
-    title: 'Objection Handling',
-    phase: 'Stakeholder',
-    impact: 'High Impact',
-    summary: 'Prepare responses to common stakeholder objections and concerns.',
-    content: createRTCCFContent(
-      'You are a UX strategist expert in stakeholder management and objection handling.',
-      'Prepare responses to common stakeholder objections and concerns.',
-      'You have [design proposal] that may face [stakeholder objections].',
-      'Anticipate concerns, prepare evidence-based responses, focus on business value and user impact.',
-      'Objection handling: Common concerns, Evidence-based responses, Business value focus, User impact emphasis, Follow-up plan.'
-    ),
-    tags: ['Deep Dive', 'Strategic'],
-    category: 'content'
-  },
-  {
-    id: '29',
-    title: 'Trade-off Visual',
-    phase: 'Stakeholder',
-    impact: 'Quick Win',
-    summary: 'Create visual representations of design trade-offs for stakeholder decision-making.',
-    content: createRTCCFContent(
-      'You are a UX designer expert in visual communication and decision support.',
-      'Create visual representations of design trade-offs for stakeholder decision-making.',
-      'You have [design decisions] with [trade-offs] that need stakeholder understanding.',
-      'Visualize trade-offs clearly, show impact on different stakeholders, support informed decision-making.',
-      'Trade-off visualization: Decision options, Impact analysis, Stakeholder effects, Recommendation rationale, Implementation timeline.'
-    ),
-    tags: ['Quick Win', 'Visual Output'],
-    category: 'design'
-  },
-  {
-    id: '30',
-    title: 'Decision Logs',
-    phase: 'Stakeholder',
-    impact: 'Quick Win',
-    summary: 'Document design decisions and rationale for future reference and alignment.',
-    content: createRTCCFContent(
-      'You are a UX strategist expert in decision documentation and project governance.',
-      'Document design decisions and rationale for future reference and alignment.',
-      'You have [design decisions] that need documentation for [future reference and alignment].',
-      'Document decisions clearly, include rationale, capture stakeholder input, plan for future updates.',
-      'Decision log: Decision summary, Rationale, Stakeholder input, Implementation plan, Review schedule.'
-    ),
-    tags: ['Quick Win'],
-    category: 'content'
-  },
-  {
-    id: '31',
-    title: 'Component Specs',
-    phase: 'Dev Handoff',
-    impact: 'High Impact',
-    summary: 'Create detailed component specifications for development implementation.',
-    content: createRTCCFContent(
-      'You are a UX designer expert in design specifications and developer collaboration.',
-      'Create detailed component specifications for development implementation.',
-      'You have [design components] that need detailed specifications for [development team].',
-      'Provide comprehensive specs, ensure developer understanding, include all necessary details.',
-      'Component specs: Visual design, Interactions, States, Accessibility, Implementation notes, Testing requirements.'
-    ),
-    tags: ['Deep Dive', 'Technical'],
-    category: 'development'
-  },
-  {
-    id: '32',
-    title: 'Design Redlines',
-    phase: 'Dev Handoff',
-    impact: 'Quick Win',
-    summary: 'Create precise design redlines for accurate development implementation.',
-    content: createRTCCFContent(
-      'You are a UX designer expert in design specifications and technical documentation.',
-      'Create precise design redlines for accurate development implementation.',
-      'You have [design elements] that need precise specifications for [development accuracy].',
-      'Provide exact measurements, spacing, typography, colors, and interaction details.',
-      'Redline documentation: Measurements, Spacing, Typography, Colors, Interactions, Implementation notes.'
-    ),
-    tags: ['Quick Win', 'Technical'],
-    category: 'development'
-  },
-  {
-    id: '33',
-    title: 'Design Consistency',
-    phase: 'Dev Handoff',
-    impact: 'High Impact',
-    summary: 'Ensure design consistency across all components and interactions.',
-    content: createRTCCFContent(
-      'You are a design systems expert specializing in consistency and quality assurance.',
-      'Ensure design consistency across all components and interactions.',
-      'You have [design system] that needs consistency validation and [quality assurance].',
-      'Review all components, identify inconsistencies, create guidelines, ensure implementation quality.',
-      'Consistency audit: Component review, Inconsistency identification, Guideline creation, Implementation validation, Quality metrics.'
-    ),
-    tags: ['Deep Dive', 'Strategic'],
-    category: 'design'
-  },
-  {
-    id: '34',
-    title: 'Acceptance Criteria',
-    phase: 'Dev Handoff',
-    impact: 'Quick Win',
-    summary: 'Define clear acceptance criteria for design implementation quality.',
-    content: createRTCCFContent(
-      'You are a UX designer expert in quality assurance and acceptance criteria.',
-      'Define clear acceptance criteria for design implementation quality.',
-      'You have [design implementation] that needs [acceptance criteria] for quality validation.',
-      'Create measurable criteria, ensure clarity, include accessibility requirements, plan for testing.',
-      'Acceptance criteria: Visual accuracy, Interaction quality, Accessibility compliance, Performance requirements, Testing methods.'
-    ),
-    tags: ['Quick Win', 'Quality'],
-    category: 'development'
-  },
-  {
-    id: '35',
-    title: 'Token Structure',
-    phase: 'Dev Handoff',
-    impact: 'High Impact',
-    summary: 'Design comprehensive design token structure for consistent implementation.',
-    content: createRTCCFContent(
-      'You are a design systems expert specializing in token architecture and implementation.',
-      'Design comprehensive design token structure for consistent implementation.',
-      'You have [design system] that needs [token structure] for consistent implementation.',
-      'Create scalable token system, ensure consistency, plan for evolution, document clearly.',
-      'Token structure: Color tokens, Typography tokens, Spacing tokens, Component tokens, Documentation, Evolution plan.'
-    ),
-    tags: ['Deep Dive', 'Technical'],
-    category: 'development'
-  },
-  {
-    id: '36',
-    title: 'Innovation Framework',
-    phase: 'Ideation',
-    impact: 'High Impact',
-    summary: 'Apply innovation frameworks to systematically generate breakthrough ideas.',
-    content: createRTCCFContent(
-      'You are an innovation strategist expert in systematic ideation frameworks.',
-      'Apply innovation frameworks to systematically generate breakthrough ideas.',
-      'You have [business challenge] that needs innovative solutions using [framework approach].',
-      'Follow framework methodology, ensure diverse perspectives, focus on breakthrough potential.',
-      'Framework application: Methodology, Team composition, Process steps, Evaluation criteria, Output format.'
-    ),
-    tags: ['Deep Dive', 'Strategic'],
-    category: 'design'
-  },
-  {
-    id: '37',
-    title: 'Prototype Planning',
+    id: '506',
+    title: 'Accessibility-Focused Redesign',
     phase: 'Prototyping',
-    impact: 'Quick Win',
-    summary: 'Plan prototyping approach and create rapid prototypes for user testing.',
+    subcategory: 'high-fidelity-design',
+    summary: 'Redesign a screen with accessibility as the primary lens.',
     content: createRTCCFContent(
-      'You are a prototyping expert specializing in rapid iteration and user testing.',
-      'Plan prototyping approach and create rapid prototypes for user testing.',
-      'You have [design concept] that needs prototyping for [user testing objectives].',
-      'Choose appropriate fidelity level, focus on key interactions, plan for rapid iteration.',
-      'Plan: Fidelity level, Key features, User testing goals, Iteration strategy, Timeline.'
+      'You are an accessibility-focused designer.',
+      'Redesign a screen to improve accessibility and inclusivity.',
+      'You have a high fidelity screen used by [persona].',
+      'Ensure color contrast, keyboard navigation, text size, screen reader labels, and error messaging are optimized.',
+      'Deliverables: Annotated redesign recommendations highlighting accessibility improvements.'
     ),
-    tags: ['Quick Win', 'Visual Output'],
-    category: 'design'
+    tags: ['High Fidelity', 'Accessibility'],
+    category: 'prototyping'
   },
+
+  // Design Crit
   {
-    id: '38',
-    title: 'Interactive Prototype',
+    id: '507',
+    title: 'Screenshot Usability Review',
     phase: 'Prototyping',
-    impact: 'High Impact',
-    summary: 'Create interactive prototypes that simulate real user experiences.',
+    subcategory: 'design-crit',
+    summary: 'Analyze a screenshot and suggest usability and design improvements.',
     content: createRTCCFContent(
-      'You are a UX designer expert in interactive prototyping and user experience simulation.',
-      'Create interactive prototypes that simulate real user experiences.',
-      'You have [design concept] that needs interactive prototyping for [user testing].',
-      'Focus on key user flows, realistic interactions, and testable scenarios.',
-      'Deliverables: Interactive prototype, User testing scenarios, Success criteria, Iteration plan.'
+      'You are a senior UX designer conducting a heuristic review.',
+      'Evaluate the provided screenshot and propose actionable improvements.',
+      'You have a high-fidelity screen used by [persona] for [task] in a government SaaS application.',
+      'Focus feedback on clarity of hierarchy, navigation, accessibility, and consistency with design system best practices. Prioritize the top 3–5 changes with highest impact.',
+      'Deliverables: List of prioritized improvement ideas with rationale, grouped under categories such as Layout, Interaction, Content, and Accessibility.'
     ),
-    tags: ['Deep Dive', 'Visual Output'],
-    category: 'design'
+    tags: ['Heuristic Review', 'Usability', 'Screenshot Input'],
+    category: 'prototyping'
   },
   {
-    id: '39',
-    title: 'Design System',
+    id: '508',
+    title: 'Before/After Comparison Crit',
     phase: 'Prototyping',
-    impact: 'High Impact',
-    summary: 'Develop comprehensive design systems for consistent user experiences.',
+    subcategory: 'design-crit',
+    summary: 'Compare two screenshots (current vs redesign) and provide structured feedback.',
     content: createRTCCFContent(
-      'You are a design systems expert specializing in scalable design frameworks.',
-      'Develop comprehensive design systems for consistent user experiences.',
-      'You have [product suite] that needs consistent design patterns and components.',
-      'Create scalable components, ensure consistency, document guidelines, plan for evolution.',
-      'System components: Design tokens, Component library, Documentation, Governance model, Evolution plan.'
+      'You are a senior UX reviewer.',
+      'Analyze two screenshots (before and after) to highlight improvements and remaining issues.',
+      'You have a current screen and a redesigned screen for [persona] completing [task].',
+      'Compare hierarchy, clarity, accessibility, and adherence to design system standards. Highlight what improved, what regressed, and opportunities still open.',
+      'Deliverables: Comparison table with columns for "Before," "After," and "Comments," plus top 3 recommendations for further improvement.'
     ),
-    tags: ['Deep Dive', 'Strategic'],
-    category: 'design'
+    tags: ['Design Critique', 'Comparison', 'Screenshot Input'],
+    category: 'prototyping'
   },
   {
-    id: '40',
-    title: 'User Testing',
+    id: '509',
+    title: 'Accessibility Audit Crit',
     phase: 'Prototyping',
-    impact: 'High Impact',
-    summary: 'Conduct user testing sessions to validate prototypes and gather feedback.',
+    subcategory: 'design-crit',
+    summary: 'Review a screenshot for accessibility issues and propose fixes.',
     content: createRTCCFContent(
-      'You are a UX researcher expert in user testing and prototype validation.',
-      'Conduct user testing sessions to validate prototypes and gather feedback.',
-      'You have [prototype] that needs user testing to validate [design decisions].',
-      'Create realistic scenarios, recruit appropriate users, gather actionable feedback.',
-      'Testing plan: Scenarios, Participant criteria, Metrics, Analysis framework, Action items.'
+      'You are an accessibility auditor.',
+      'Evaluate the screenshot for accessibility barriers.',
+      'You have a high-fidelity screen used by [persona] for [task].',
+      'Check contrast ratios, font sizes, alt text affordances, keyboard focus states, and error handling. Recommend fixes aligned with WCAG 2.1 AA.',
+      'Deliverables: List of top accessibility issues, their severity, and specific design or content changes to resolve them.'
     ),
-    tags: ['Deep Dive', 'Persona-based'],
-    category: 'research'
+    tags: ['Accessibility', 'Critique'],
+    category: 'prototyping'
   },
   {
-    id: '41',
-    title: 'Iteration Planning',
+    id: '510',
+    title: 'Design System Consistency Check',
     phase: 'Prototyping',
-    impact: 'Quick Win',
-    summary: 'Plan design iterations based on user feedback and testing results.',
+    subcategory: 'design-crit',
+    summary: 'Evaluate whether a screen is consistent with the design system.',
     content: createRTCCFContent(
-      'You are a UX designer expert in iterative design and user feedback integration.',
-      'Plan design iterations based on user feedback and testing results.',
-      'You have [user testing results] that need to inform [design iteration planning].',
-      'Prioritize feedback, plan iterations, ensure user-centered improvements.',
-      'Iteration plan: Feedback prioritization, Design changes, Testing strategy, Success metrics.'
+      'You are a design systems specialist.',
+      'Review a screenshot for consistency with the design system.',
+      'You have a high-fidelity screen meant to use standardized components.',
+      'Identify where deviations occur (colors, spacing, components, typography) and whether they are justified.',
+      'Deliverables: Annotated list of inconsistencies, recommended fixes, and note of any new components worth considering.'
     ),
-    tags: ['Quick Win', 'Strategic'],
-    category: 'design'
+    tags: ['Design System', 'Consistency', 'Critique'],
+    category: 'prototyping'
   },
   {
-    id: '42',
-    title: 'Stakeholder Presentation',
-    phase: 'Stakeholder',
-    impact: 'High Impact',
-    summary: 'Present design solutions to stakeholders and gather feedback for alignment.',
+    id: '511',
+    title: 'Content Clarity Crit',
+    phase: 'Prototyping',
+    subcategory: 'design-crit',
+    summary: 'Assess the clarity and readability of text within a design.',
     content: createRTCCFContent(
-      'You are a UX strategist expert in stakeholder communication and design presentation.',
-      'Present design solutions to stakeholders and gather feedback for alignment.',
-      'You have [design solution] that needs stakeholder presentation and feedback.',
-      'Focus on business value, user impact, and clear next steps for stakeholder alignment.',
-      'Presentation structure: Problem, Solution, User value, Business impact, Next steps, Feedback collection.'
+      'You are a UX writer and content strategist.',
+      'Review all text and microcopy in the screenshot.',
+      'You have a high-fidelity design for [persona] completing [task].',
+      'Look for jargon, overly complex phrasing, missing labels, or unhelpful error messages. Propose clearer alternatives.',
+      'Deliverables: Side-by-side copy audit with suggested rewrites and rationale for each.'
     ),
-    tags: ['Deep Dive', 'Strategic'],
-    category: 'content'
+    tags: ['Content', 'Microcopy', 'Critique'],
+    category: 'prototyping'
   },
   {
-    id: '43',
-    title: 'Design Review',
-    phase: 'Stakeholder',
-    impact: 'Quick Win',
-    summary: 'Conduct design reviews with stakeholders to ensure alignment and gather feedback.',
+    id: '512',
+    title: 'First Impression Crit',
+    phase: 'Prototyping',
+    subcategory: 'design-crit',
+    summary: 'Assess what users notice first and whether it matches intended priorities.',
     content: createRTCCFContent(
-      'You are a UX designer expert in design reviews and stakeholder collaboration.',
-      'Conduct design reviews with stakeholders to ensure alignment and gather feedback.',
-      'You have [design work] that needs stakeholder review and feedback collection.',
-      'Prepare clear presentation, focus on key decisions, gather actionable feedback.',
-      'Review structure: Design overview, Key decisions, Rationale, Feedback collection, Action items.'
+      'You are a UX researcher simulating a first impression test.',
+      'Evaluate what a new user\'s eyes and attention are likely drawn to first.',
+      'You have a high-fidelity design meant for [persona] completing [task].',
+      'Compare intended hierarchy (designer\'s goals) with likely user perception. Highlight mismatches and distractions.',
+      'Deliverables: Ranked list of visual elements in order of attention grab, with notes on alignment or misalignment to priorities.'
     ),
-    tags: ['Quick Win', 'Collaborative'],
-    category: 'design'
-  },
-  {
-    id: '44',
-    title: 'Requirements Gathering',
-    phase: 'Stakeholder',
-    impact: 'High Impact',
-    summary: 'Gather and document stakeholder requirements for design projects.',
-    content: createRTCCFContent(
-      'You are a UX strategist expert in requirements gathering and stakeholder management.',
-      'Gather and document stakeholder requirements for design projects.',
-      'You have [design project] that needs stakeholder requirements and project scope.',
-      'Ensure clear communication, document requirements, validate understanding, plan for changes.',
-      'Requirements document: Project scope, Stakeholder needs, Success criteria, Constraints, Timeline.'
-    ),
-    tags: ['Deep Dive', 'Strategic'],
-    category: 'content'
-  },
-  {
-    id: '45',
-    title: 'Dev Handoff',
-    phase: 'Dev Handoff',
-    impact: 'High Impact',
-    summary: 'Prepare comprehensive design handoff documentation for development teams.',
-    content: createRTCCFContent(
-      'You are a UX designer expert in design handoff and developer collaboration.',
-      'Prepare comprehensive design handoff documentation for development teams.',
-      'You have [design solution] that needs handoff to [development team] for implementation.',
-      'Create clear specifications, ensure developer understanding, plan for collaboration and feedback.',
-      'Handoff package: Design specs, Component details, Interactions, Assets, Collaboration plan.'
-    ),
-    tags: ['Deep Dive', 'Technical'],
-    category: 'development'
-  },
-  {
-    id: '46',
-    title: 'Design QA',
-    phase: 'Dev Handoff',
-    impact: 'Quick Win',
-    summary: 'Conduct design quality assurance to ensure implementation matches design intent.',
-    content: createRTCCFContent(
-      'You are a UX designer expert in design quality assurance and implementation review.',
-      'Conduct design quality assurance to ensure implementation matches design intent.',
-      'You have [implemented feature] that needs design QA against [original design specifications].',
-      'Review implementation thoroughly, document issues, prioritize fixes, ensure design integrity.',
-      'QA process: Implementation review, Issue documentation, Priority assessment, Fix coordination, Final validation.'
-    ),
-    tags: ['Quick Win', 'Technical'],
-    category: 'development'
+    tags: ['Visual Hierarchy', 'Attention', 'Critique'],
+    category: 'prototyping'
   }
 ];
-
-export const phases = ['Research', 'IA', 'Ideation', 'Prototyping', 'Stakeholder', 'Dev Handoff'] as const;
-export const tags = ['Persona-based', 'Quick Win', 'Deep Dive', 'Accessible Design', 'Visual Output', 'Copywriting', 'Competitive Analysis'] as const;

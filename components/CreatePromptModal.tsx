@@ -214,7 +214,7 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
                       <SelectItem value="Ideation">Ideation</SelectItem>
                       <SelectItem value="Prototyping">Prototyping</SelectItem>
                       <SelectItem value="Stakeholder">Stakeholder</SelectItem>
-                      <SelectItem value="Dev Handoff">Dev Handoff</SelectItem>
+      
                     </SelectContent>
                   </Select>
                 </motion.div>

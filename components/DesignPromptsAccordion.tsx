@@ -14,7 +14,7 @@ export function DesignPromptsAccordion({ selectedPhase, onPhaseSelect }: DesignP
     { id: 'Ideation', label: 'Ideation & Concept Development', color: 'green' },
     { id: 'Prototyping', label: 'Prototyping & Testing', color: 'orange' },
     { id: 'Stakeholder', label: 'Stakeholder & PM Conversations', color: 'pink' },
-    { id: 'Dev Handoff', label: 'Developer Handoff & QA', color: 'cyan' }
+  
   ];
 
   const getPhaseColorClasses = (color: string, isSelected: boolean) => {

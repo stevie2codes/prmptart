@@ -58,18 +58,7 @@ export function SidePanel({ prompt, isOpen, onClose }: SidePanelProps) {
     }
   };
 
-  const getImpactIcon = () => {
-    switch (prompt?.impact) {
-      case "High Impact":
-        return "🔥";
-      case "Quick Win":
-        return "⚡";
-      case "5-min Setup":
-        return "⏱";
-      default:
-        return "💡";
-    }
-  };
+
 
   const getPhaseColor = () => {
     if (!prompt) return "";
@@ -80,9 +69,9 @@ export function SidePanel({ prompt, isOpen, onClose }: SidePanelProps) {
       Ideation: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
       Prototyping: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
       Stakeholder: "bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300",
-      "Dev Handoff": "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300",
-    };
-    return colors[prompt.phase] || "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300";
+      "Flows & IA": "bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300",
+    } as const;
+    return colors[prompt.phase as keyof typeof colors] || "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300";
   };
 
   if (!prompt) return null;
@@ -179,21 +168,7 @@ export function SidePanel({ prompt, isOpen, onClose }: SidePanelProps) {
                   </Badge>
                 </motion.div>
                 
-                <motion.div
-                  variants={variants.scaleIn}
-                  initial="hidden"
-                  animate="visible"
-                  transition={{ delay: 0.35 }}
-                  style={{ willChange: performance.willChange.transform }}
-                >
-                  <Badge 
-                    variant="outline" 
-                    className="text-xs font-medium bg-muted/50 text-muted-foreground"
-                  >
-                    <span className="mr-1">{getImpactIcon()}</span>
-                    {prompt.impact}
-                  </Badge>
-                </motion.div>
+
               </div>
             </motion.div>
 

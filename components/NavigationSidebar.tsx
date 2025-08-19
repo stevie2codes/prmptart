@@ -10,8 +10,8 @@ interface NavigationSidebarProps {
   onToggle: () => void;
   selectedPhase: string | null;
   onPhaseSelect: (phase: string) => void;
-  selectedCategory: 'design' | 'pm' | 'engineering' | null;
-  onCategorySelect: (category: 'design' | 'pm' | 'engineering') => void;
+  selectedCategory: 'research' | 'ideation' | 'flows' | 'prototyping' | null;
+  onCategorySelect: (category: 'research' | 'ideation' | 'flows' | 'prototyping') => void;
   showFavorites: boolean;
   onFavoritesToggle: () => void;
   showMyPrompts: boolean;
@@ -54,40 +54,128 @@ export function NavigationSidebar({
     onToggle();
   };
 
-  const handleCategorySelect = (category: 'design' | 'pm' | 'engineering') => {
+  const handleCategorySelect = (category: 'research' | 'ideation' | 'flows' | 'prototyping') => {
     playSound('FILTER_SELECT');
     onCategorySelect(category);
   };
 
   const categories = [
     {
-      id: 'design' as const,
-      label: 'Design Prompts',
-      icon: Palette,
-      color: 'blue' as const,
-      phases: [
-        { id: 'Research', label: 'Research & Discovery', color: 'blue' as const },
-        { id: 'IA', label: 'User Flows & IA', color: 'purple' as const },
-        { id: 'Ideation', label: 'Ideation & Concept Development', color: 'green' as const },
-        { id: 'Prototyping', label: 'Prototyping & Testing', color: 'orange' as const },
-        { id: 'Stakeholder', label: 'Stakeholder & PM Conversations', color: 'pink' as const },
-        { id: 'Dev Handoff', label: 'Developer Handoff & QA', color: 'cyan' as const }
-      ]
-    },
-    {
-      id: 'pm' as const,
-      label: 'PM Prompts',
+      id: 'research' as const,
+      label: 'Research & Discovery',
       icon: Users,
       color: 'purple' as const,
-      phases: [] // Future implementation
+      subcategories: [
+        { 
+          id: 'discovery', 
+          title: 'Discovery', 
+          color: 'blue' as const,
+          prompts: ['Generative Interview Script', 'Competitive Analysis', 'Simulated Usability Interview', 'Stakeholder Interview Guide', 'Mock Usability Test Plan']
+        },
+        { 
+          id: 'synthesis', 
+          title: 'Synthesis', 
+          color: 'green' as const,
+          prompts: ['Surface User Frustrations', 'Cluster Messy Notes', 'From Patterns to Insights', 'User Journey Mapping', 'Thematic Trend Spotting']
+        },
+        { 
+          id: 'storytelling', 
+          title: 'Storytelling', 
+          color: 'orange' as const,
+          prompts: ['Reframe into Design Opportunities', 'Audience-Specific Insight Storytelling', 'Evidence Matrix Creation']
+        },
+        { 
+          id: 'validation', 
+          title: 'Validation', 
+          color: 'pink' as const,
+          prompts: ['Survey Generator', 'Persona Hypothesis Builder']
+        }
+      ]
     },
-    {
-      id: 'engineering' as const,
-      label: 'Engineering Prompts',
-      icon: Code,
-      color: 'green' as const,
-      phases: [] // Future implementation
-    }
+          {
+        id: 'ideation' as const,
+        label: 'Ideation',
+        icon: Palette,
+        color: 'blue' as const,
+        subcategories: [
+          { 
+            id: 'brainstorming', 
+            title: 'Brainstorming', 
+            color: 'green' as const,
+            prompts: ['Concept Sketch Prompts', 'Crazy 8s Expansion', 'Blue Sky Exploration']
+          },
+          { 
+            id: 'opportunity-framing', 
+            title: 'Opportunity Framing', 
+            color: 'orange' as const,
+            prompts: ['How Might We Generator', 'Constraint-Driven Ideation']
+          },
+          { 
+            id: 'concept-development', 
+            title: 'Concept Development', 
+            color: 'purple' as const,
+            prompts: ['Concept Sketch Prompts', 'Idea Remix Generator']
+          },
+          { 
+            id: 'prioritization', 
+            title: 'Prioritization', 
+            color: 'cyan' as const,
+            prompts: ['Impact/Effort Matrix', 'Dot Voting Simulation']
+          }
+        ]
+      },
+      {
+        id: 'flows' as const,
+        label: 'User Flows & IA',
+        icon: Code,
+        color: 'green' as const,
+        subcategories: [
+          { 
+            id: 'navigation-ia', 
+            title: 'Navigation & IA', 
+            color: 'blue' as const,
+            prompts: ['Information Architecture', 'Navigation Mapping', 'Wayfinding Scenarios']
+          },
+          { 
+            id: 'task-flows', 
+            title: 'Task Flows', 
+            color: 'orange' as const,
+            prompts: ['Task Flow Generator', 'Edge Case Flow Mapping', 'Alternate Pathways Exploration', 'User Flow Setup']
+          },
+          { 
+            id: 'content-hierarchy', 
+            title: 'Content Hierarchy', 
+            color: 'purple' as const,
+            prompts: ['Content Priority Mapping', 'Hierarchy Audit', 'Card Sorting Simulation']
+          }
+        ]
+      },
+      {
+        id: 'prototyping' as const,
+        label: 'Prototyping & Design',
+        icon: Palette,
+        color: 'purple' as const,
+        subcategories: [
+          { 
+            id: 'wireframing', 
+            title: 'Wireframing', 
+            color: 'blue' as const,
+            prompts: ['Wireframe Layout Generator', 'Screen Comparison Variants', 'Content-to-Wireframe Mapping']
+          },
+          { 
+            id: 'high-fidelity-design', 
+            title: 'High Fidelity Design', 
+            color: 'orange' as const,
+            prompts: ['UI Exploration Prompts', 'Design System Application', 'Accessibility-Focused Redesign']
+          },
+          { 
+            id: 'design-crit', 
+            title: 'Design Crit', 
+            color: 'cyan' as const,
+            prompts: ['Screenshot Usability Review', 'Before/After Comparison Crit', 'Accessibility Audit Crit', 'Design System Consistency Check', 'Content Clarity Crit', 'First Impression Crit']
+          }
+        ]
+      }
   ];
 
 
@@ -219,12 +307,12 @@ export function NavigationSidebar({
 
         {/* Navigation Content */}
         <div className="flex-1 overflow-hidden">
-          <div className="p-4 space-y-2">
+          <div className="p-4 pb-6 space-y-2">
             {/* Categories */}
             {categories.map((category) => {
               const Icon = category.icon;
               const isSelected = selectedCategory === category.id;
-              const hasPhases = category.phases.length > 0;
+              const hasSubcategories = category.subcategories && category.subcategories.length > 0;
               
               return (
                 <div key={category.id} className="space-y-1">
@@ -235,7 +323,7 @@ export function NavigationSidebar({
                       }
                       handleCategorySelect(category.id);
                     }}
-                    className={`w-full text-left p-3 rounded-xl transition-all duration-200 font-medium text-sm border border-transparent text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground`}
+                    className={`w-full text-left p-3 rounded-xl transition-all duration-200 font-medium text-base border border-transparent text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     layout
@@ -252,7 +340,7 @@ export function NavigationSidebar({
                             className="flex items-center justify-between flex-1"
                           >
                             <span>{category.label}</span>
-                            {hasPhases && (
+                            {hasSubcategories && (
                               <motion.div
                                 animate={{ rotate: isSelected ? 180 : 0 }}
                                 transition={{ duration: 0.2 }}
@@ -266,43 +354,43 @@ export function NavigationSidebar({
                     </div>
                   </motion.button>
 
-                  {/* Phase submenu for selected category */}
+                  {/* Subcategories submenu for selected category */}
                   <AnimatePresence>
-                    {!isCollapsed && isSelected && hasPhases && (
+                    {!isCollapsed && isSelected && hasSubcategories && (
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="ml-7 space-y-1 overflow-hidden"
+                        className="ml-7 space-y-1"
                       >
-                        {category.phases.map((phase, index) => (
+                        {category.subcategories.map((subcategory, index) => (
                           <motion.button
-                            key={phase.id}
+                            key={subcategory.id}
                             onClick={() => {
                               if (isCollapsed) {
                                 onToggle(); // Expand sidebar first
                               }
-                              onPhaseSelect(phase.id);
+                              onPhaseSelect(subcategory.id);
                             }}
-                            className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 font-medium text-s border ${
-                              selectedPhase === phase.id 
-                                ? `border ${getPhaseColorClasses(phase.color, true)}`
-                                : `border-transparent text-sidebar-foreground/60 ${getPhaseColorClasses(phase.color, false)}`
+                            className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 font-sm text-s border ${
+                              selectedPhase === subcategory.id 
+                                ? `border ${getPhaseColorClasses(subcategory.color, true)}`
+                                : `border-transparent text-sidebar-foreground/60 ${getPhaseColorClasses(subcategory.color, false)}`
                             }`}
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.2, delay: index * 0.05 }}
-                            whileHover={{ scale: 1.02, x: 4 }}
+                            whileHover={{ scale: 1.02, x: 2 }}
                             whileTap={{ scale: 0.98 }}
                           >
                             <div className="flex items-center gap-2">
                               <div className={`w-1 h-1 rounded-full transition-colors duration-200 ${
-                                selectedPhase === phase.id 
-                                  ? `bg-${phase.color}-500` 
+                                selectedPhase === subcategory.id 
+                                  ? `bg-${subcategory.color}-500` 
                                   : 'bg-sidebar-foreground/30'
                               }`}></div>
-                              <span>{phase.label}</span>
+                              <span>{subcategory.title}</span>
                             </div>
                           </motion.button>
                         ))}
@@ -320,7 +408,7 @@ export function NavigationSidebar({
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.2, delay: 0.3 }}
-                            whileHover={{ scale: 1.02, x: 4 }}
+                            whileHover={{ scale: 1.02, x: 2 }}
                             whileTap={{ scale: 0.98 }}
                           >
                             <div className="flex items-center gap-2">
@@ -335,7 +423,7 @@ export function NavigationSidebar({
 
                   {/* Coming Soon for categories without phases */}
                   <AnimatePresence>
-                    {!isCollapsed && isSelected && !hasPhases && (
+                                            {!isCollapsed && isSelected && !hasSubcategories && (
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
