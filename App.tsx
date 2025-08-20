@@ -2,11 +2,14 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ScrollAnimatedCard } from "./components/ScrollAnimatedCard";
 import { ScrollAnimatedSection } from "./components/ScrollAnimatedSection";
-import { TopBar } from "./components/TopBar";
+
 import { NavigationSidebar } from "./components/NavigationSidebar";
 import { MultiSelect } from "./components/MultiSelect";
+import { SearchBar } from "./components/SearchBar";
 import { CreatePromptModal } from "./components/CreatePromptModal";
 import { SidePanel } from "./components/SidePanel";
+import { SoundControl } from "./components/SoundControl";
+import { ThemeToggle } from "./components/ThemeToggle";
 import { mockPrompts, Prompt } from "./data/prompts";
 import { variants } from "./src/lib/animations";
 import { ThemeProvider } from "./components/ThemeProvider";
@@ -172,11 +175,7 @@ function AppContent() {
         }}
       />
 
-      {/* Top Bar - Fixed at top */}
-      <TopBar
-        isSidebarCollapsed={isSidebarCollapsed}
-        onCreatePrompt={() => setIsCreateModalOpen(true)}
-      />
+
 
       {/* Navigation Sidebar */}
       <NavigationSidebar
@@ -191,8 +190,7 @@ function AppContent() {
         showMyPrompts={showMyPrompts}
         onMyPromptsToggle={handleMyPromptsToggle}
         prompts={prompts}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
+        onCreatePrompt={() => setIsCreateModalOpen(true)}
       />
 
       {/* Main Content */}
@@ -209,92 +207,106 @@ function AppContent() {
         }}
       >
         {/* Main Content Area */}
-        <main className="pt-24 px-4 sm:px-6 pb-6 min-h-screen">
+        <main className="pt-8 px-4 sm:px-6 pb-6 min-h-screen">
           {/* Page Header */}
           <ScrollAnimatedSection>
             <div className="mb-8">
-              <motion.h1 
-                className="text-4xl font-medium text-foreground mb-2 font-syne"
-                variants={variants.slideIn}
-                initial="hidden"
-                animate="visible"
-                transition={{ delay: 0.1 }}
-                style={{ willChange: "transform" }}
-              >
-                {showFavorites 
-                  ? 'Favorite Prompts' 
-                  : showMyPrompts
-                    ? 'My Prompts'
-                    : selectedCategory 
-                      ? selectedCategory === 'research' ? 'Research Prompts' : selectedCategory === 'ideation' ? 'Ideation Prompts' : selectedCategory === 'flows' ? 'User Flows & IA Prompts' : 'Prototyping & Design Prompts'
-                      : 'Prompt Library'
-                }
-              </motion.h1>
-              <motion.p 
-                className="text-lg text-muted-foreground"
-                variants={variants.slideIn}
-                initial="hidden"
-                animate="visible"
-                transition={{ delay: 0.2 }}
-                style={{ willChange: "transform" }}
-              >
-                {showFavorites 
-                  ? 'Your saved and favorite prompts ✨' 
-                  : showMyPrompts
-                    ? 'Prompts you\'ve created and customized 🎨'
-                    : selectedCategory
-                      ? selectedCategory === 'research' ? 'Browse research prompts and workflows' : selectedCategory === 'ideation' ? 'Explore ideation and concept development prompts' : selectedCategory === 'flows' ? 'Design user flows and information architecture' : 'Create wireframes and high fidelity designs'
-                      : 'Discover and organize your AI prompts for better workflows'
-                }
-              </motion.p>
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <motion.h1 
+                    className="text-4xl font-medium text-foreground mb-2 font-syne"
+                    variants={variants.slideIn}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ delay: 0.1 }}
+                    style={{ willChange: "transform" }}
+                  >
+                    {showFavorites 
+                      ? 'Favorite Prompts' 
+                      : showMyPrompts
+                        ? 'My Prompts'
+                        : selectedCategory 
+                          ? selectedCategory === 'research' ? 'Research Prompts' : selectedCategory === 'ideation' ? 'Ideation Prompts' : selectedCategory === 'flows' ? 'User Flows & IA Prompts' : 'Prototyping & Design Prompts'
+                          : 'Prompt Library'
+                    }
+                  </motion.h1>
+                  <motion.p 
+                    className="text-lg text-muted-foreground"
+                    variants={variants.slideIn}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ delay: 0.2 }}
+                    style={{ willChange: "transform" }}
+                  >
+                    {showFavorites 
+                      ? 'Your saved and favorite prompts ✨' 
+                      : showMyPrompts
+                        ? 'Prompts you\'ve created and customized 🎨'
+                        : selectedCategory
+                          ? selectedCategory === 'research' ? 'Browse research prompts and workflows' : selectedCategory === 'ideation' ? 'Explore ideation and concept development prompts' : selectedCategory === 'flows' ? 'Design user flows and information architecture' : 'Create wireframes and high fidelity designs'
+                          : 'Discover and organize your AI prompts for better workflows'
+                    }
+                  </motion.p>
+                </div>
+                
+                {/* Controls - Top Right */}
+                <div className="flex items-center gap-4 flex-shrink-0">
+                  <SoundControl />
+                  <ThemeToggle />
+                </div>
+              </div>
             </div>
           </ScrollAnimatedSection>
 
           {/* Search and Filters */}
           {!showFavorites && !showMyPrompts && (
-            <div className="space-y-6 mb-8">
-              {/* Tag Filter */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-medium text-foreground font-syne">Filter by Tags</h3>
-                  <span className="text-xs text-foreground">
-                    ({(() => {
-                      const relevantPrompts = selectedPhase 
-                        ? mockPrompts.filter(prompt => prompt.subcategory === selectedPhase)
-                        : mockPrompts;
-                      return relevantPrompts.flatMap(prompt => prompt.tags).filter((tag, index, self) => self.indexOf(tag) === index).length;
-                    })()} available)
-                  </span>
+            <ScrollAnimatedSection>
+              <div className="mb-8">
+                <div className="flex items-end gap-4 mb-4">
+                  {/* Search Bar */}
+                  <div className="w-80 flex-shrink-0">
+                    <SearchBar
+                      value={searchQuery}
+                      onChange={setSearchQuery}
+                      placeholder="Search prompts..."
+                    />
+                  </div>
+                  
+                  {/* Tag Filter */}
+                  <div className="w-80 flex-shrink-0">
+                    <MultiSelect
+                      options={(() => {
+                        // Filter prompts by selected subcategory if one is selected
+                        const relevantPrompts = selectedPhase 
+                          ? mockPrompts.filter(prompt => prompt.subcategory === selectedPhase)
+                          : mockPrompts;
+                        
+                        const allTags = relevantPrompts.flatMap(prompt => prompt.tags);
+                        const tagCounts = allTags.reduce((acc, tag) => {
+                          acc[tag] = (acc[tag] || 0) + 1;
+                          return acc;
+                        }, {} as Record<string, number>);
+                        
+                        return Object.entries(tagCounts)
+                          .sort(([, a], [, b]) => b - a)
+                          .map(([tag, count]) => ({
+                            value: tag,
+                            label: tag,
+                            count
+                          }));
+                      })()}
+                      selectedValues={selectedTags}
+                      onSelectionChange={setSelectedTags}
+                      placeholder="Filter by tags..."
+                    />
+                  </div>
                 </div>
-                <MultiSelect
-                  options={(() => {
-                    // Filter prompts by selected subcategory if one is selected
-                    const relevantPrompts = selectedPhase 
-                      ? mockPrompts.filter(prompt => prompt.subcategory === selectedPhase)
-                      : mockPrompts;
-                    
-                    const allTags = relevantPrompts.flatMap(prompt => prompt.tags);
-                    const tagCounts = allTags.reduce((acc, tag) => {
-                      acc[tag] = (acc[tag] || 0) + 1;
-                      return acc;
-                    }, {} as Record<string, number>);
-                    
-                    return Object.entries(tagCounts)
-                      .sort(([, a], [, b]) => b - a)
-                      .map(([tag, count]) => ({
-                        value: tag,
-                        label: tag,
-                        count
-                      }));
-                  })()}
-                  selectedValues={selectedTags}
-                  onSelectionChange={setSelectedTags}
-                  placeholder="Select tags to filter..."
-                  className="max-w-md"
-                />
-              </div>
-            </div>
-          )}
+                
+                                   {/* Separator Line */}
+                   <div className="border-b border-border/30 pb-6"></div>
+                 </div>
+               </ScrollAnimatedSection>
+             )}
 
           {/* Results Summary */}
           <ScrollAnimatedSection>
@@ -323,7 +335,7 @@ function AppContent() {
           </ScrollAnimatedSection>
 
           {/* Prompt Grid */}
-          <ScrollAnimatedSection>
+          <ScrollAnimatedSection className="relative -z-10">
             <AnimatePresence mode="wait">
               {filteredPrompts.length > 0 ? (
                 <motion.div

@@ -17,7 +17,7 @@ export function FilterChips({ selectedTags, onTagToggle, onClearTags }: FilterCh
   const { playSound } = useSound();
 
   const handleTagToggle = (tag: string) => {
-    playSound('FILTER_SELECT');
+    playSound('MOUSE_CLICK');
     onTagToggle(tag);
   };
 

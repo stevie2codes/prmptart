@@ -106,6 +106,13 @@ export const SOUNDS = {
     url: 'https://assets.mixkit.co/active_storage/sfx/2585/2585-preview.mp3',
     volume: 0.3,
     preload: true
+  },
+
+  // Subtle mouse click sound
+  MOUSE_CLICK: {
+    url: 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3',
+    volume: 0.15,
+    preload: true
   }
 };
 

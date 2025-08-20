@@ -1,9 +1,10 @@
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, Palette, Users, Code, Plus, X, ChevronDown, Heart, Search } from "lucide-react";
+import { Palette, Users, Code, Plus, X, ChevronDown, Heart, PanelLeft, BookOpen } from "lucide-react";
 
 import { useSound } from "../src/contexts/SoundContext";
-import { SearchBar } from "./SearchBar";
-import { useRef, useEffect } from "react";
+
+
 
 interface NavigationSidebarProps {
   isCollapsed: boolean;
@@ -17,8 +18,7 @@ interface NavigationSidebarProps {
   showMyPrompts: boolean;
   onMyPromptsToggle: () => void;
   prompts: any[];
-  searchQuery: string;
-  onSearchChange: (query: string) => void;
+  onCreatePrompt: () => void;
 }
 
 export function NavigationSidebar({ 
@@ -26,28 +26,17 @@ export function NavigationSidebar({
   onToggle, 
   selectedPhase, 
   onPhaseSelect, 
-  selectedCategory, 
+  selectedCategory,
   onCategorySelect,
   showFavorites,
   onFavoritesToggle,
   showMyPrompts,
   onMyPromptsToggle,
   prompts,
-  searchQuery,
-  onSearchChange
+  onCreatePrompt
 }: NavigationSidebarProps) {
   const { playSound } = useSound();
-  const searchInputRef = useRef<HTMLInputElement>(null);
-
-  // Focus search input when sidebar expands
-  useEffect(() => {
-    if (!isCollapsed && searchInputRef.current) {
-      // Small delay to ensure the search bar is rendered
-      setTimeout(() => {
-        searchInputRef.current?.focus();
-      }, 100);
-    }
-  }, [isCollapsed]);
+  const [isLogoHovered, setIsLogoHovered] = useState(false);
 
   const handleToggle = () => {
     playSound('SIDEBAR_TOGGLE');
@@ -55,7 +44,7 @@ export function NavigationSidebar({
   };
 
   const handleCategorySelect = (category: 'research' | 'ideation' | 'flows' | 'prototyping') => {
-    playSound('FILTER_SELECT');
+    playSound('MOUSE_CLICK');
     onCategorySelect(category);
   };
 
@@ -225,12 +214,61 @@ export function NavigationSidebar({
         >
           {/* Logo and Title */}
           <motion.div
-            className={`flex items-center gap-2 ${isCollapsed ? 'cursor-pointer mb-4' : ''}`}
+            className={`flex items-center gap-2 ${isCollapsed ? 'cursor-pointer mb-4 relative' : ''}`}
             onClick={isCollapsed ? handleToggle : undefined}
+            onMouseEnter={() => setIsLogoHovered(true)}
+            onMouseLeave={() => setIsLogoHovered(false)}
             whileHover={isCollapsed ? { scale: 1.05 } : {}}
             whileTap={isCollapsed ? { scale: 0.95 } : {}}
           >
-            <img src="/newlogo.svg" alt="Prompt Pantry" className="h-12 w-12" />
+            <div className="relative">
+              <AnimatePresence mode="wait">
+                {isCollapsed ? (
+                  isLogoHovered ? (
+                    <motion.div
+                      key="panel-icon"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      transition={{ duration: 0.15 }}
+                      className="h-12 w-12 flex items-center justify-center bg-sidebar-accent/50 rounded-lg border border-sidebar-border/30"
+                    >
+                      <PanelLeft className="h-5 w-5 text-sidebar-foreground" />
+                    </motion.div>
+                  ) : (
+                    <motion.img
+                      key="logo"
+                      src="/newlogo.svg"
+                      alt="Prompt Pantry"
+                      className="h-12 w-12"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      transition={{ duration: 0.15 }}
+                    />
+                  )
+                ) : (
+                  <img src="/newlogo.svg" alt="Prompt Pantry" className="h-12 w-12" />
+                )}
+              </AnimatePresence>
+              
+              {/* Tooltip */}
+              <AnimatePresence>
+                {isCollapsed && isLogoHovered && (
+                  <motion.div
+                    initial={{ opacity: 0, x: -10, scale: 0.9 }}
+                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                    exit={{ opacity: 0, x: -10, scale: 0.9 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute left-16 top-1/2 -translate-y-1/2 z-50 px-3 py-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-sm rounded-lg shadow-lg whitespace-nowrap pointer-events-none"
+                  >
+                    Open sidebar
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 dark:bg-gray-100 rotate-45"></div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+            
             <AnimatePresence mode="wait">
               {!isCollapsed && (
                 <h1 
@@ -245,27 +283,7 @@ export function NavigationSidebar({
             </AnimatePresence>
           </motion.div>
 
-          {/* Search Icon when collapsed */}
-          <AnimatePresence mode="wait">
-            {isCollapsed && (
-              <motion.button
-                key="search-icon"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.2 }}
-                onClick={handleToggle}
-                className="w-full text-left p-3 rounded-xl transition-all duration-200 font-medium text-sm border border-transparent text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                layout
-              >
-                <div className="flex items-center gap-3">
-                  <Search className="h-4 w-4 mx-auto" />
-                </div>
-              </motion.button>
-            )}
-          </AnimatePresence>
+
           
           {/* Toggle Button - Only visible when expanded */}
           <AnimatePresence mode="wait">
@@ -278,32 +296,54 @@ export function NavigationSidebar({
                 onClick={handleToggle}
                 className="h-12 w-12 p-0 hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground rounded-xl flex items-center justify-center"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <PanelLeft className="h-4 w-4" />
               </motion.button>
             )}
           </AnimatePresence>
         </motion.div>
 
-        {/* Search Bar Section - Below header, replacing divider */}
-        <AnimatePresence mode="wait">
-          {!isCollapsed && (
-            <motion.div
-              key="search-bar-section"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="px-6 pb-4"
+        {/* Create New Button */}
+        <div className="px-4 pb-4">
+          <motion.button
+            onClick={() => {
+              if (isCollapsed) {
+                onToggle(); // Expand sidebar first
+              }
+              playSound('BUTTON_SOFT_DOUBLE');
+              onCreatePrompt();
+            }}
+            className={`${isCollapsed ? 'w-12 h-12 p-0' : 'w-auto px-4 py-3'} text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground rounded-xl transition-all duration-200 font-medium text-base border border-transparent`}
+            style={{
+              height: isCollapsed ? '48px' : '48px',
+              minHeight: '48px'
+            }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            layout
+          >
+            <motion.div 
+              className="flex items-center justify-center gap-3"
+              layout
             >
-              <SearchBar
-                ref={searchInputRef}
-                value={searchQuery}
-                onChange={onSearchChange}
-                placeholder="Search prompts..."
-              />
+              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                <Plus className="h-4 w-4 text-white" />
+              </div>
+              <AnimatePresence mode="wait">
+                {!isCollapsed && (
+                  <motion.span
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: 'auto' }}
+                    exit={{ opacity: 0, width: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden whitespace-nowrap"
+                  >
+                    Create new prompt
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </motion.div>
-          )}
-        </AnimatePresence>
+          </motion.button>
+        </div>
 
         {/* Navigation Content */}
         <div className="flex-1 overflow-hidden">
@@ -323,13 +363,24 @@ export function NavigationSidebar({
                       }
                       handleCategorySelect(category.id);
                     }}
-                    className={`w-full text-left p-3 rounded-xl transition-all duration-200 font-medium text-base border border-transparent text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground`}
+                    className={`w-full text-left p-3 rounded-xl transition-all duration-200 font-medium text-base border border-transparent text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground relative`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     layout
                   >
                     <div className="flex items-center gap-3">
-                      <Icon className={`h-4 w-4 ${isCollapsed ? 'mx-auto' : ''}`} />
+                      <div className="relative group">
+                        <Icon className={`h-4 w-4 ${isCollapsed ? 'mx-auto' : ''}`} />
+                        
+                        {/* Tooltip for collapsed state */}
+                        {isCollapsed && (
+                          <div className="absolute left-16 top-1/2 -translate-y-1/2 z-50 px-3 py-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-sm rounded-lg shadow-lg whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                            {category.label}
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 dark:bg-gray-100 rotate-45"></div>
+                          </div>
+                        )}
+                      </div>
+                      
                       <AnimatePresence mode="wait">
                         {!isCollapsed && (
                           <motion.div
@@ -481,7 +532,7 @@ export function NavigationSidebar({
                 }
                 onFavoritesToggle();
               }}
-              className={`w-full text-left p-3 rounded-xl transition-all duration-200 font-medium text-sm border border-transparent text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground ${
+              className={`w-full text-left p-3 rounded-xl transition-all duration-200 font-medium text-sm border border-transparent text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground relative ${
                 showFavorites ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-700' : ''
               }`}
               whileHover={{ scale: 1.02 }}
@@ -489,7 +540,17 @@ export function NavigationSidebar({
               layout
             >
               <div className="flex items-center gap-3">
-                <Heart className={`h-4 w-4 ${isCollapsed ? 'mx-auto' : ''}`} />
+                <div className="relative group">
+                  <Heart className={`h-4 w-4 ${isCollapsed ? 'mx-auto' : ''}`} />
+                  
+                  {/* Tooltip for collapsed state */}
+                  {isCollapsed && (
+                    <div className="absolute left-16 top-1/2 -translate-y-1/2 z-50 px-3 py-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-sm rounded-lg shadow-lg whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      Favorites
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 dark:bg-gray-100 rotate-45"></div>
+                    </div>
+                  )}
+                </div>
                 <AnimatePresence mode="wait">
                   {!isCollapsed && (
                     <motion.div
@@ -529,7 +590,7 @@ export function NavigationSidebar({
                 }
                 onMyPromptsToggle();
               }}
-              className={`w-full text-left p-3 rounded-xl transition-all duration-200 font-medium text-sm border border-transparent text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground ${
+              className={`w-full text-left p-3 rounded-xl transition-all duration-200 font-medium text-sm border border-transparent text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground relative ${
                 showMyPrompts ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700' : ''
               }`}
               whileHover={{ scale: 1.02 }}
@@ -537,7 +598,17 @@ export function NavigationSidebar({
               layout
             >
               <div className="flex items-center gap-3">
-                <Plus className={`h-4 w-4 ${isCollapsed ? 'mx-auto' : ''}`} />
+                <div className="relative group">
+                  <BookOpen className={`h-4 w-4 ${isCollapsed ? 'mx-auto' : ''}`} />
+                  
+                  {/* Tooltip for collapsed state */}
+                  {isCollapsed && (
+                    <div className="absolute left-16 top-1/2 -translate-y-1/2 z-50 px-3 py-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-sm rounded-lg shadow-lg whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      My Prompts
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 dark:bg-gray-100 rotate-45"></div>
+                    </div>
+                  )}
+                </div>
                 <AnimatePresence mode="wait">
                   {!isCollapsed && (
                     <motion.div

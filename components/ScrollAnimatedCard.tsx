@@ -42,7 +42,9 @@ export function ScrollAnimatedCard({ prompt, onOpen, index }: ScrollAnimatedCard
       }}
       style={{ 
         willChange: "transform", // Simplified willChange
-        transform: "translateZ(0)" // Force hardware acceleration
+        transform: "translateZ(0)",
+
+       
       }}
       whileHover={{
         y: -4, // Reduced from -8 for subtler hover

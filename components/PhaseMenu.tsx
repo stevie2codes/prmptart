@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { 
   Search, 
   Network, 
@@ -11,7 +11,7 @@ import {
   X,
   Home
 } from "lucide-react";
-import { phases } from "../data/prompts";
+
 
 interface PhaseMenuProps {
   selectedPhase: string | null;
@@ -172,8 +172,8 @@ export function PhaseMenu({ selectedPhase, onPhaseSelect, onMenuStateChange }: P
               </button>
 
               {/* Phase Navigation Items */}
-              {phases.map((phase) => {
-                const config = phaseConfig[phase];
+              {Object.keys(phaseConfig).map((phase) => {
+                const config = phaseConfig[phase as keyof typeof phaseConfig];
                 const Icon = config.icon;
                 const isSelected = selectedPhase === phase;
                 

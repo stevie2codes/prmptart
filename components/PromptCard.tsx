@@ -27,7 +27,7 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
     try {
       await navigator.clipboard.writeText(prompt.content);
       setIsCopied(true);
-      playSound('FILTER_SELECT');
+      playSound('MOUSE_CLICK');
       setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy text: ', err);
@@ -41,7 +41,7 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
 
   const handleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click when clicking heart
-    playSound('FILTER_SELECT');
+    playSound('MOUSE_CLICK');
     
     const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
     let newFavorites;

@@ -6,6 +6,8 @@ import { Badge } from './ui/badge';
 import { Input } from './ui/input';
 import { useSound } from '../src/contexts/SoundContext';
 
+
+
 interface Option {
   value: string;
   label: string;
@@ -58,7 +60,7 @@ export function MultiSelect({
   }
 
   const handleOptionToggle = useCallback((value: string) => {
-    playSound('FILTER_SELECT');
+    playSound('MOUSE_CLICK');
     const newSelection = selectedValues.includes(value)
       ? selectedValues.filter(v => v !== value)
       : [...selectedValues, value];
@@ -127,17 +129,16 @@ export function MultiSelect({
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (isOpen) {
-        const target = event.target as Node;
-        const isClickOnDropdown = dropdownRef.current?.contains(target);
-        const isClickOnTrigger = triggerRef.current?.contains(target);
-        
-        // Only close if clicking outside both dropdown and trigger
-        if (!isClickOnDropdown && !isClickOnTrigger) {
-          setIsOpen(false);
-          setFocusedIndex(-1);
-          setSearchQuery('');
-        }
+      if (!isOpen) return;
+      
+      const target = event.target as Node;
+      const isClickOnDropdown = dropdownRef.current?.contains(target);
+      
+      // Close if clicking outside the dropdown (including on the trigger)
+      if (!isClickOnDropdown) {
+        setIsOpen(false);
+        setFocusedIndex(-1);
+        setSearchQuery('');
       }
     };
 
@@ -146,16 +147,12 @@ export function MultiSelect({
   }, [isOpen]);
 
   const toggleDropdown = () => {
-    if (isOpen) {
-      // If dropdown is open, close it
-      setIsOpen(false);
-      setFocusedIndex(-1);
-      setSearchQuery('');
-    } else {
-      // If dropdown is closed, open it
-      setIsOpen(true);
-      setFocusedIndex(-1);
-      setSearchQuery('');
+    setIsOpen(!isOpen);
+    setFocusedIndex(-1);
+    setSearchQuery('');
+    
+    if (!isOpen) {
+      // Opening dropdown - focus search input
       setTimeout(() => searchInputRef.current?.focus(), 100);
     }
   };
@@ -204,11 +201,14 @@ export function MultiSelect({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: dropdownPosition === 'below' ? -10 : 10, scale: 0.95 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className={`absolute z-50 w-full bg-background border border-orange-200/50 dark:border-orange-700/50 rounded-2xl shadow-lg max-h-80 ${
+            className={`absolute w-full bg-background border border-orange-200/50 dark:border-orange-700/50 rounded-2xl shadow-2xl backdrop-blur-sm max-h-80 ${
               dropdownPosition === 'below' 
                 ? 'top-full mt-2' 
                 : 'bottom-full mb-2'
             }`}
+            style={{ 
+              zIndex: 9999
+            }}
           >
             {/* Search Input */}
             <div className="p-3 border-b border-orange-200/30 dark:border-orange-700/30">
