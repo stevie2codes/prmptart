@@ -20,6 +20,8 @@ export function SidePanel({ prompt, isOpen, onClose }: SidePanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const { playSound } = useSound();
 
+  console.log('SidePanel render:', { prompt, isOpen });
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (panelRef.current && !panelRef.current.contains(event.target as Node)) {

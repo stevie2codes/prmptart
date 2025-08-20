@@ -198,6 +198,7 @@ export function PromptCard({ prompt, onOpen }: PromptCardProps) {
           }}
           onClick={(e) => {
             e.stopPropagation();
+            console.log('View Prompt button clicked for:', prompt);
             onOpen(prompt);
           }}
         >

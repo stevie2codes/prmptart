@@ -62,6 +62,7 @@ function AppContent() {
   }, [prompts, searchQuery, selectedCategory, selectedPhase, selectedTags, showFavorites, showMyPrompts]);
 
   const handleOpenPrompt = (prompt: Prompt) => {
+    console.log('Opening prompt:', prompt);
     setSelectedPrompt(prompt);
   };
 
@@ -213,40 +214,72 @@ function AppContent() {
             <div className="mb-8">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <motion.h1 
-                    className="text-4xl font-medium text-foreground mb-2 font-syne"
-                    variants={variants.slideIn}
-                    initial="hidden"
-                    animate="visible"
-                    transition={{ delay: 0.1 }}
-                    style={{ willChange: "transform" }}
+                                <motion.h1 
+                className="text-4xl font-medium text-foreground mb-2 font-syne"
+                variants={variants.slideIn}
+                initial="hidden"
+                animate="visible"
+                transition={{ delay: 0.1 }}
+                style={{ willChange: "transform" }}
+              >
+                {showFavorites 
+                  ? 'Favorite Prompts' 
+                  : showMyPrompts
+                    ? 'My Prompts'
+                    : selectedCategory 
+                      ? (
+                        <div className="flex items-center gap-3">
+                          <span>Prompt Pantry</span>
+                          <span className="text-2xl text-muted-foreground/50">/</span>
+                          <span>{selectedCategory === 'research' ? 'Research' : selectedCategory === 'ideation' ? 'Ideation' : selectedCategory === 'flows' ? 'User Flows & IA' : 'Prototyping & Design'}</span>
+                        </div>
+                      )
+                      : 'Prompt Pantry'
+                }
+              </motion.h1>
+              
+              {/* Breadcrumb Navigation */}
+              {selectedCategory && (
+                <motion.div
+                  className="flex items-center gap-2 mb-4"
+                  variants={variants.slideIn}
+                  initial="hidden"
+                  animate="visible"
+                  transition={{ delay: 0.15 }}
+                >
+                  <button
+                    onClick={() => {
+                      setSelectedCategory(null);
+                      setSelectedPhase(null);
+                    }}
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 hover:underline"
                   >
-                    {showFavorites 
-                      ? 'Favorite Prompts' 
-                      : showMyPrompts
-                        ? 'My Prompts'
-                        : selectedCategory 
-                          ? selectedCategory === 'research' ? 'Research Prompts' : selectedCategory === 'ideation' ? 'Ideation Prompts' : selectedCategory === 'flows' ? 'User Flows & IA Prompts' : 'Prototyping & Design Prompts'
-                          : 'Prompt Library'
-                    }
-                  </motion.h1>
-                  <motion.p 
-                    className="text-lg text-muted-foreground"
-                    variants={variants.slideIn}
-                    initial="hidden"
-                    animate="visible"
-                    transition={{ delay: 0.2 }}
-                    style={{ willChange: "transform" }}
-                  >
-                    {showFavorites 
-                      ? 'Your saved and favorite prompts ✨' 
-                      : showMyPrompts
-                        ? 'Prompts you\'ve created and customized 🎨'
-                        : selectedCategory
-                          ? selectedCategory === 'research' ? 'Browse research prompts and workflows' : selectedCategory === 'ideation' ? 'Explore ideation and concept development prompts' : selectedCategory === 'flows' ? 'Design user flows and information architecture' : 'Create wireframes and high fidelity designs'
-                          : 'Discover and organize your AI prompts for better workflows'
-                    }
-                  </motion.p>
+                    Prompt Pantry
+                  </button>
+                  <span className="text-sm text-muted-foreground/50">/</span>
+                  <span className="text-sm text-foreground">
+                    {selectedCategory === 'research' ? 'Research' : selectedCategory === 'ideation' ? 'Ideation' : selectedCategory === 'flows' ? 'User Flows & IA' : 'Prototyping & Design'}
+                  </span>
+                </motion.div>
+              )}
+              
+              <motion.p 
+                className="text-lg text-muted-foreground"
+                variants={variants.slideIn}
+                initial="hidden"
+                animate="visible"
+                transition={{ delay: 0.2 }}
+                style={{ willChange: "transform" }}
+              >
+                {showFavorites 
+                  ? 'Your saved and favorite prompts ✨' 
+                  : showMyPrompts
+                    ? 'Prompts you\'ve created and customized 🎨'
+                    : selectedCategory
+                      ? selectedCategory === 'research' ? 'Browse research prompts and workflows' : selectedCategory === 'ideation' ? 'Explore ideation and concept development prompts' : selectedCategory === 'flows' ? 'Design user flows and information architecture' : 'Create wireframes and high fidelity designs'
+                      : 'Discover and organize your AI prompts for better workflows'
+                }
+              </motion.p>
                 </div>
                 
                 {/* Controls - Top Right */}
@@ -335,7 +368,7 @@ function AppContent() {
           </ScrollAnimatedSection>
 
           {/* Prompt Grid */}
-          <ScrollAnimatedSection className="relative -z-10">
+          <ScrollAnimatedSection>
             <AnimatePresence mode="wait">
               {filteredPrompts.length > 0 ? (
                 <motion.div
