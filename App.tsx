@@ -4,7 +4,6 @@ import { ScrollAnimatedCard } from "./components/ScrollAnimatedCard";
 import { ScrollAnimatedSection } from "./components/ScrollAnimatedSection";
 
 import { NavigationSidebar } from "./components/NavigationSidebar";
-import { MultiSelect } from "./components/MultiSelect";
 import { SearchBar } from "./components/SearchBar";
 import { CreatePromptModal } from "./components/CreatePromptModal";
 import { SidePanel } from "./components/SidePanel";
@@ -24,11 +23,11 @@ function AppContent() {
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPhase, setSelectedPhase] = useState<string | null>(null);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [prompts, setPrompts] = useState<Prompt[]>(mockPrompts);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<'research' | 'ideation' | 'flows' | 'prototyping' | null>('research');
+  const [selectedCategory, setSelectedCategory] = useState<'research' | 'ideation' | 'flows' | 'prototyping' | null>(null);
   const [showFavorites, setShowFavorites] = useState(false);
   const [showMyPrompts, setShowMyPrompts] = useState(false);
 
@@ -47,8 +46,7 @@ function AppContent() {
         prompt.subcategory === selectedPhase ||
         prompt.phase === selectedPhase;
       
-      const matchesTags = selectedTags.length === 0 || 
-        selectedTags.some(tag => (prompt.tags || []).includes(tag));
+
       
       const matchesFavorites = !showFavorites || (() => {
         const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
@@ -57,9 +55,9 @@ function AppContent() {
       
       const matchesMyPrompts = !showMyPrompts || prompt.isUserCreated;
       
-      return matchesSearch && matchesCategory && matchesPhase && matchesTags && matchesFavorites && matchesMyPrompts;
+      return matchesSearch && matchesCategory && matchesPhase && matchesFavorites && matchesMyPrompts;
     });
-  }, [prompts, searchQuery, selectedCategory, selectedPhase, selectedTags, showFavorites, showMyPrompts]);
+      }, [prompts, searchQuery, selectedCategory, selectedPhase, showFavorites, showMyPrompts]);
 
   const handleOpenPrompt = (prompt: Prompt) => {
     console.log('Opening prompt:', prompt);
@@ -97,33 +95,28 @@ function AppContent() {
   };
 
   const handleFavoritesToggle = () => {
-    playSound('FILTER_SELECT');
     setShowFavorites(prev => !prev);
     // Clear other filters when showing favorites
     if (!showFavorites) {
       setSelectedCategory(null);
       setSelectedPhase(null);
-      setSelectedTags([]);
     }
     // Clear my prompts when switching to favorites
     setShowMyPrompts(false);
   };
 
   const handleMyPromptsToggle = () => {
-    playSound('FILTER_SELECT');
     setShowMyPrompts(prev => !prev);
     // Clear other filters when showing my prompts
     if (!showMyPrompts) {
       setSelectedCategory(null);
       setSelectedPhase(null);
-      setSelectedTags([]);
     }
     // Clear favorites when switching to my prompts
     setShowFavorites(false);
   };
 
   const handleCategorySelect = (category: 'research' | 'ideation' | 'flows' | 'prototyping') => {
-    playSound('FILTER_SELECT');
     // If switching from favorites or my prompts, turn them off
     if (showFavorites) {
       setShowFavorites(false);
@@ -138,7 +131,6 @@ function AppContent() {
   };
 
   const handlePhaseSelect = (phase: string) => {
-    playSound('FILTER_SELECT');
     // If switching from favorites or my prompts, turn them off
     if (showFavorites) {
       setShowFavorites(false);
@@ -277,7 +269,7 @@ function AppContent() {
                     ? 'Prompts you\'ve created and customized 🎨'
                     : selectedCategory
                       ? selectedCategory === 'research' ? 'Browse research prompts and workflows' : selectedCategory === 'ideation' ? 'Explore ideation and concept development prompts' : selectedCategory === 'flows' ? 'Design user flows and information architecture' : 'Create wireframes and high fidelity designs'
-                      : 'Discover and organize your AI prompts for better workflows'
+                      : 'AI prompts built for designers to enhance daily workflows'
                 }
               </motion.p>
                 </div>
@@ -295,45 +287,16 @@ function AppContent() {
           {!showFavorites && !showMyPrompts && (
             <ScrollAnimatedSection>
               <div className="mb-8">
-                <div className="flex items-end gap-4 mb-4">
-                  {/* Search Bar */}
-                  <div className="w-80 flex-shrink-0">
-                    <SearchBar
-                      value={searchQuery}
-                      onChange={setSearchQuery}
-                      placeholder="Search prompts..."
-                    />
-                  </div>
-                  
-                  {/* Tag Filter */}
-                  <div className="w-80 flex-shrink-0">
-                    <MultiSelect
-                      options={(() => {
-                        // Filter prompts by selected subcategory if one is selected
-                        const relevantPrompts = selectedPhase 
-                          ? mockPrompts.filter(prompt => prompt.subcategory === selectedPhase)
-                          : mockPrompts;
-                        
-                        const allTags = relevantPrompts.flatMap(prompt => prompt.tags);
-                        const tagCounts = allTags.reduce((acc, tag) => {
-                          acc[tag] = (acc[tag] || 0) + 1;
-                          return acc;
-                        }, {} as Record<string, number>);
-                        
-                        return Object.entries(tagCounts)
-                          .sort(([, a], [, b]) => b - a)
-                          .map(([tag, count]) => ({
-                            value: tag,
-                            label: tag,
-                            count
-                          }));
-                      })()}
-                      selectedValues={selectedTags}
-                      onSelectionChange={setSelectedTags}
-                      placeholder="Filter by tags..."
-                    />
-                  </div>
-                </div>
+                                   <div className="flex items-end gap-4 mb-4">
+                     {/* Search Bar */}
+                     <div className="w-2/4 min-w-80 flex-shrink-0">
+                       <SearchBar
+                         value={searchQuery}
+                         onChange={setSearchQuery}
+                         placeholder="Search prompts..."
+                       />
+                     </div>
+                   </div>
                 
                                    {/* Separator Line */}
                    <div className="border-b border-border/30 pb-6"></div>
@@ -368,7 +331,7 @@ function AppContent() {
           </ScrollAnimatedSection>
 
           {/* Prompt Grid */}
-          <ScrollAnimatedSection>
+          <div>
             <AnimatePresence mode="wait">
               {filteredPrompts.length > 0 ? (
                 <motion.div
@@ -468,7 +431,7 @@ function AppContent() {
                 </motion.div>
               )}
             </AnimatePresence>
-          </ScrollAnimatedSection>
+          </div>
         </main>
       </div>
 

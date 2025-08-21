@@ -19,9 +19,15 @@ interface CreatePromptModalProps {
 interface FormData {
   title: string;
   summary: string;
-  content: string;
+  role: string;
+  task: string;
+  context: string;
+  constraints: string;
+  format: string;
   phase: string;
+  subcategory: string;
   category: string;
+  content: string;
   exampleOutput: string;
 }
 
@@ -29,9 +35,15 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
   const [formData, setFormData] = useState<FormData>({
     title: "",
     summary: "",
-    content: "",
+    role: "",
+    task: "",
+    context: "",
+    constraints: "",
+    format: "",
     phase: "Research",
-    category: "design",
+    subcategory: "",
+    category: "research",
+    content: "",
     exampleOutput: ""
   });
   const [showExample, setShowExample] = useState(false);
@@ -49,19 +61,48 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
     setFormData({
       title: "",
       summary: "",
-      content: "",
+      role: "",
+      task: "",
+      context: "",
+      constraints: "",
+      format: "",
       phase: "Research",
-      category: "design",
+      subcategory: "",
+      category: "research",
+      content: "",
       exampleOutput: ""
     });
     onClose();
   };
 
+  const generatePromptContent = () => {
+    return `Role: ${formData.role}
+
+Task: ${formData.task}
+
+Context: ${formData.context}
+
+Constraints: ${formData.constraints}
+
+Format: ${formData.format}
+
+Please provide a comprehensive response based on the above framework.`;
+  };
+
   const handleSave = () => {
-    playSound('FORM_SUBMIT');
-    if (formData.title && formData.content && formData.phase && formData.category) {
+    playSound('MOUSE_CLICK');
+    if (formData.title && formData.role && formData.task && formData.context && formData.constraints && formData.format && formData.phase && formData.subcategory && formData.category) {
+      // Map phase to category if not already set
+      const mappedCategory = formData.category || 
+        (formData.phase === "Research" ? "research" :
+         formData.phase === "Ideation" ? "ideation" :
+         formData.phase === "Flows & IA" ? "flows" :
+         formData.phase === "Prototyping" ? "prototyping" : "research");
+      
       onSave({
         ...formData,
+        category: mappedCategory,
+        content: generatePromptContent(), // Generate content from RTCCF fields
         id: Date.now().toString(),
         createdAt: new Date().toISOString(),
       });
@@ -172,7 +213,7 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
                   />
                 </motion.div>
 
-                {/* Content */}
+                {/* RTCCF Framework */}
                 <motion.div
                   variants={variants.slideIn}
                   initial="hidden"
@@ -180,17 +221,84 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
                   transition={{ delay: 0.2 }}
                   style={{ willChange: performance.willChange.transform }}
                 >
-                                        <Label htmlFor="content" className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 block font-syne">
-                        Prompt Content *
-                      </Label>
-                  <Textarea
-                    id="content"
-                    value={formData.content}
-                    onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-                    placeholder="Enter your prompt content here..."
-                    rows={6}
-                    className="w-full resize-none"
-                  />
+                  <Label className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3 block font-syne">
+                    RTCCF Framework *
+                  </Label>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-4">
+                    Use the RTCCF framework to create structured, effective prompts: Role, Task, Context, Constraints, and Format.
+                  </p>
+                  
+                  {/* Role */}
+                  <div className="space-y-2 mb-4">
+                    <Label htmlFor="role" className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                      Role
+                    </Label>
+                    <Input
+                      id="role"
+                      value={formData.role}
+                      onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value }))}
+                      placeholder="e.g., UX Researcher, Product Designer, Design Strategist"
+                      className="w-full"
+                    />
+                  </div>
+
+                  {/* Task */}
+                  <div className="space-y-2 mb-4">
+                    <Label htmlFor="task" className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                      Task
+                    </Label>
+                    <Input
+                      id="task"
+                      value={formData.task}
+                      onChange={(e) => setFormData(prev => ({ ...prev, task: e.target.value }))}
+                      placeholder="e.g., Conduct user interviews, Create wireframes, Analyze user feedback"
+                      className="w-full"
+                    />
+                  </div>
+
+                  {/* Context */}
+                  <div className="space-y-2 mb-4">
+                    <Label htmlFor="context" className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                      Context
+                    </Label>
+                    <Textarea
+                      id="context"
+                      value={formData.context}
+                      onChange={(e) => setFormData(prev => ({ ...prev, context: e.target.value }))}
+                      placeholder="e.g., Working on a mobile app redesign for a fintech startup targeting millennials"
+                      rows={2}
+                      className="w-full resize-none"
+                    />
+                  </div>
+
+                  {/* Constraints */}
+                  <div className="space-y-2 mb-4">
+                    <Label htmlFor="constraints" className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                      Constraints
+                    </Label>
+                    <Textarea
+                      id="constraints"
+                      value={formData.constraints}
+                      onChange={(e) => setFormData(prev => ({ ...prev, constraints: e.target.value }))}
+                      placeholder="e.g., Limited budget, 2-week timeline, Must be accessible (WCAG 2.1 AA)"
+                      rows={2}
+                      className="w-full resize-none"
+                    />
+                  </div>
+
+                  {/* Format */}
+                  <div className="space-y-2 mb-4">
+                    <Label htmlFor="format" className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                      Format
+                    </Label>
+                    <Input
+                      id="format"
+                      value={formData.format}
+                      onChange={(e) => setFormData(prev => ({ ...prev, format: e.target.value }))}
+                      placeholder="e.g., Bullet points, Step-by-step guide, Checklist, Template"
+                      className="w-full"
+                    />
+                  </div>
                 </motion.div>
 
                 {/* Phase */}
@@ -204,17 +312,79 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
                                                                              <Label htmlFor="phase" className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 block font-syne">
                        Design Phase *
                      </Label>
-                  <Select value={formData.phase} onValueChange={(value) => setFormData(prev => ({ ...prev, phase: value }))}>
+                  <Select value={formData.phase} onValueChange={(value) => {
+                    // Map phase to category
+                    const mappedCategory = 
+                      value === "Research" ? "research" :
+                      value === "Ideation" ? "ideation" :
+                      value === "Flows & IA" ? "flows" :
+                      value === "Prototyping" ? "prototyping" : "research";
+                    
+                    setFormData(prev => ({ 
+                      ...prev, 
+                      phase: value,
+                      category: mappedCategory,
+                      subcategory: "" // Reset subcategory when phase changes
+                    }))
+                  }}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a phase" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Research">Research</SelectItem>
-                      <SelectItem value="IA">IA</SelectItem>
                       <SelectItem value="Ideation">Ideation</SelectItem>
-                      <SelectItem value="Prototyping">Prototyping</SelectItem>
-                      <SelectItem value="Stakeholder">Stakeholder</SelectItem>
-      
+                      <SelectItem value="Flows & IA">User Flows & IA</SelectItem>
+                      <SelectItem value="Prototyping">Prototyping & Design</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </motion.div>
+
+                {/* Subcategory */}
+                <motion.div
+                  variants={variants.slideIn}
+                  initial="hidden"
+                  animate="visible"
+                  transition={{ delay: 0.3 }}
+                  style={{ willChange: performance.willChange.transform }}
+                >
+                  <Label htmlFor="subcategory" className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 block font-syne">
+                    Subcategory
+                  </Label>
+                  <Select value={formData.subcategory} onValueChange={(value) => setFormData(prev => ({ ...prev, subcategory: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a subcategory" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {formData.phase === "Research" && (
+                        <>
+                          <SelectItem value="discovery">Discovery</SelectItem>
+                          <SelectItem value="synthesis">Synthesis</SelectItem>
+                          <SelectItem value="storytelling">Storytelling</SelectItem>
+                          <SelectItem value="validation">Validation</SelectItem>
+                        </>
+                      )}
+                      {formData.phase === "Ideation" && (
+                        <>
+                          <SelectItem value="brainstorming">Brainstorming</SelectItem>
+                          <SelectItem value="opportunity-framing">Opportunity Framing</SelectItem>
+                          <SelectItem value="concept-development">Concept Development</SelectItem>
+                          <SelectItem value="prioritization">Prioritization</SelectItem>
+                        </>
+                      )}
+                      {formData.phase === "Flows & IA" && (
+                        <>
+                          <SelectItem value="navigation-ia">Navigation & IA</SelectItem>
+                          <SelectItem value="task-flows">Task Flows</SelectItem>
+                          <SelectItem value="content-hierarchy">Content Hierarchy</SelectItem>
+                        </>
+                      )}
+                      {formData.phase === "Prototyping" && (
+                        <>
+                          <SelectItem value="wireframing">Wireframing</SelectItem>
+                          <SelectItem value="high-fidelity-design">High Fidelity Design</SelectItem>
+                          <SelectItem value="design-crit">Design Crit</SelectItem>
+                        </>
+                      )}
                     </SelectContent>
                   </Select>
                 </motion.div>
@@ -235,10 +405,10 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="design">Design</SelectItem>
                       <SelectItem value="research">Research</SelectItem>
-                      <SelectItem value="content">Content</SelectItem>
-                      <SelectItem value="development">Development</SelectItem>
+                      <SelectItem value="ideation">Ideation</SelectItem>
+                      <SelectItem value="flows">User Flows & IA</SelectItem>
+                      <SelectItem value="prototyping">Prototyping & Design</SelectItem>
                     </SelectContent>
                   </Select>
                 </motion.div>
@@ -319,7 +489,7 @@ export function CreatePromptModal({ isOpen, onClose, onSave }: CreatePromptModal
                 >
                   <Button
                     onClick={handleSave}
-                    disabled={!formData.title || !formData.content || !formData.phase || !formData.category}
+                    disabled={!formData.title || !formData.role || !formData.task || !formData.context || !formData.constraints || !formData.format || !formData.phase || !formData.subcategory || !formData.category}
                     className="px-6 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 hover:from-orange-600 hover:via-pink-600 hover:to-purple-700 text-white border-0"
                   >
                     Create Prompt

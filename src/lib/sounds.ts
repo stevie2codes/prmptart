@@ -60,7 +60,7 @@ export const SOUNDS = {
   // Theme & Navigation
   THEME_SWITCH: {
     url: 'https://assets.mixkit.co/active_storage/sfx/2578/2578-preview.mp3',
-    volume: 0.3,
+    volume: 0.1,
     preload: true
   },
   

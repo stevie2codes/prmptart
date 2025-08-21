@@ -160,7 +160,7 @@ export function MultiSelect({
   const selectedOptions = options.filter(option => selectedValues.includes(option.value));
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative ${className}`} style={{ position: 'relative', zIndex: 99999 }}>
       {/* Trigger Button */}
       <Button
         ref={triggerRef}
@@ -207,7 +207,7 @@ export function MultiSelect({
                 : 'bottom-full mb-2'
             }`}
             style={{ 
-              zIndex: 9999
+              zIndex: 99999
             }}
           >
             {/* Search Input */}

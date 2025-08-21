@@ -32,7 +32,7 @@ export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(
     <div className="relative w-full">
       <div className="relative">
         {/* Search Icon */}
-        <div className="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+        <div className="absolute z-10 left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
           <Search className="h-5 w-5 text-orange-500" />
         </div>
 

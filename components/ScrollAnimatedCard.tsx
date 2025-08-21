@@ -13,8 +13,8 @@ export function ScrollAnimatedCard({ prompt, onOpen, index }: ScrollAnimatedCard
   const ref = useRef(null);
   const isInView = useInView(ref, { 
     once: true, 
-    margin: "-50px 0px -50px 0px", // Reduced margin for better performance
-    amount: 0.1 // Reduced amount for faster triggering
+    margin: "0px 0px -100px 0px", // Positive top margin so cards show immediately
+    amount: 0.01 // Very small amount to trigger faster
   });
 
   return (
